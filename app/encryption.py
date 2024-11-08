@@ -48,6 +48,7 @@ def retrieve_encrypted_password(cursor, username, site_name, master_password):
         print("No password found for this site.")
         return None
     
+# Update the encrypted password in the database
 def update_encrypted_password(cursor, conn, username, site_name, new_password, master_password):
     """
     Updates the encrypted password for a specific site in the database.
@@ -61,8 +62,6 @@ def update_encrypted_password(cursor, conn, username, site_name, new_password, m
     padder = padding.PKCS7(128).padder()
     padded_data = padder.update(new_password.encode()) + padder.finalize()
     encrypted_password = encryptor.update(padded_data) + encryptor.finalize()
-
-    # Update the encrypted password in the database
     cursor.execute("UPDATE stored_passwords SET salt = ?, iv = ?, encrypted_password = ? WHERE username = ? AND site_name = ?",
                 (salt, iv, encrypted_password, username, site_name))
     conn.commit()
