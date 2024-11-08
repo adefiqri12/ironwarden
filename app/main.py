@@ -9,7 +9,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from app.database import init_db
 from app.user import create_user, authenticate_user
-from app.encryption import store_encrypted_password, retrieve_encrypted_password
+from app.encryption import store_encrypted_password, update_encrypted_password, retrieve_encrypted_password
 from app.ascii import print_ascii_welcome
 
 def clear_screen():
@@ -90,7 +90,9 @@ def main():
                     print("\nOptions:")
                     print("1. Store a new password")
                     print("2. Retrieve a password")
-                    print("3. Logout")
+                    print("3. Delete a stored password")
+                    print("4. Update a stored password")
+                    print("5. Logout")
                     option = input("Choose an option: ")
                     
                     if option == '1':
@@ -128,8 +130,55 @@ def main():
                                 print("Invalid input. Please enter a number.")
                         else:
                             print("No stored passwords found.")
-                    
+
                     elif option == '3':
+                        # Delete a stored account and password
+                        cursor.execute("SELECT site_name FROM stored_passwords WHERE username = ?", (login_username,))
+                        sites = cursor.fetchall()
+                        if sites:
+                            print("\nStored Account/ID:")
+                            for idx, site in enumerate(sites, start=1):
+                                print(f"{idx}. {site[0]}")
+                            try:
+                                choice = int(input("Select a number to delete the account: ")) - 1
+                                if 0 <= choice < len(sites):
+                                    selected_site = sites[choice][0]
+                                    # Perform deletion from the database
+                                    cursor.execute("DELETE FROM stored_passwords WHERE username = ? AND site_name = ?", 
+                                                (login_username, selected_site))
+                                    conn.commit()
+                                    print(f"Account '{selected_site}' has been deleted successfully.")
+                                else:
+                                    print("Invalid selection.")
+                            except ValueError:
+                                print("Invalid input. Please enter a number.")
+                        else:
+                            print("No stored passwords to delete.")
+                    
+                    elif option == '4':
+                        # Update stored password
+                        cursor.execute("SELECT site_name FROM stored_passwords WHERE username = ?", (login_username,))
+                        sites = cursor.fetchall()
+                        if sites:
+                            print("\nStored Account/ID:")
+                            for idx, site in enumerate(sites, start=1):
+                                print(f"{idx}. {site[0]}")
+                            
+                            try:
+                                choice = int(input("Select a number to update the password: ")) - 1
+                                if 0 <= choice < len(sites):
+                                    selected_site = sites[choice][0]
+                                    new_password = input(f"Enter the new password for '{selected_site}': ")
+                                    update_encrypted_password(cursor, conn, login_username, selected_site, new_password, login_password)
+                                    print(f"Password for '{selected_site}' has been updated successfully.")
+                                else:
+                                    print("Invalid selection.")
+                            except ValueError:
+                                print("Invalid input. Please enter a number.")
+                        else:
+                            print("No stored passwords found.")
+                    
+                    elif option == '5':
                         exit_program(conn, login_username, login_password, retrieved_password, sites)
                     else:
                         print("Invalid option. Please choose again.")

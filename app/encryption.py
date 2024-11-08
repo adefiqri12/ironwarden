@@ -47,3 +47,23 @@ def retrieve_encrypted_password(cursor, username, site_name, master_password):
     else:
         print("No password found for this site.")
         return None
+    
+def update_encrypted_password(cursor, conn, username, site_name, new_password, master_password):
+    """
+    Updates the encrypted password for a specific site in the database.
+    """
+    # Generate a new salt and key for re-encryption
+    salt = os.urandom(16)
+    key = derive_key(master_password, salt)
+    iv = os.urandom(16)
+    cipher = Cipher(algorithms.AES(key), modes.CBC(iv), backend=default_backend())
+    encryptor = cipher.encryptor()
+    padder = padding.PKCS7(128).padder()
+    padded_data = padder.update(new_password.encode()) + padder.finalize()
+    encrypted_password = encryptor.update(padded_data) + encryptor.finalize()
+
+    # Update the encrypted password in the database
+    cursor.execute("UPDATE stored_passwords SET salt = ?, iv = ?, encrypted_password = ? WHERE username = ? AND site_name = ?",
+                (salt, iv, encrypted_password, username, site_name))
+    conn.commit()
+    print(f"Password for '{site_name}' updated successfully!")

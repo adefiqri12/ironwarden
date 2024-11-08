@@ -19,10 +19,8 @@ Python 3.10
 
 * **Login Setup**: Create a new account and login to the program
 * **Sqlite Database**: Store user data securely in a SQLite database
-* **Master Password**: Set a master password to secure your account
-* **Password Storage**: Store new passwords for different sites or IDs
-* **Password Retrieval**: Retrieve stored passwords
-* **Logout**: Logout of your account
+* **Master Password**: Set a master password to secure your all data
+* **Password Storage**: CRUD (Create, Read, Update, Delete) operations for storing passwords for different sites or IDs
 
 ## Planned Features
 -------------------
@@ -38,11 +36,11 @@ Python 3.10
 
 - [x] Add login setup (create)
 - [x] Add sqlite database
-- [ ] Edit master password 
 - [x] Add id and email to corresponding stored password
-- [ ] Edit stored password
+- [x] Edit stored password
 - [x] The Password will be not shown but automatically paste
 - [x] Cleaning memory after master_password or stored password been call using os_urandom and ctypes
+- [ ] Edit master password with 12 seed phrase
 
 ## Second Todolist
 -----------------
