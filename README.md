@@ -29,20 +29,15 @@
 * **Text-Based Data Storage**: Store text-based data, such as notes and accounts
 * **Searching Feature**: Add a searching feature for account search
 
-## Done Features
-----------------
-
-* (None yet, but you can add them as you complete them!)
-
 ## First Todolist
 -----------------
 
 - [x] Add login setup (create)
 - [x] Add sqlite database
-- [] Edit master password 
-- [] Add id and email to corresponding stored password
-- [] Edit stored password
-- [] Cleaning memory after master_password or stored password been call using os_urandom and ctypes
+- [ ] Edit master password 
+- [ ] Add id and email to corresponding stored password
+- [ ] Edit stored password
+- [ ] Cleaning memory after master_password or stored password been call using os_urandom and ctypes
 
 ## Second Todolist
 -----------------
