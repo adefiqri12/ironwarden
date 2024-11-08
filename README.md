@@ -20,7 +20,6 @@ For a detailed explanation, refer to [how_it_works.txt](how_it_works.txt).
 - [Planned Features](#planned-features)
 - [Future Implementations](#future-implementations)
 
----
 
 ## Features
 
@@ -29,7 +28,6 @@ For a detailed explanation, refer to [how_it_works.txt](how_it_works.txt).
 - **Master Password**: Set a master password to protect all stored data.
 - **Password Management**: Includes full CRUD (Create, Read, Update, Delete) operations for storing and managing passwords for various sites or IDs.
 
----
 
 ## Installation
 
@@ -45,12 +43,11 @@ For a detailed explanation, refer to [how_it_works.txt](how_it_works.txt).
    ```
 
 3. **Run the Application**  
-   To launch the password manager, use:
+   To launch the password manager, run the command :
    ```bash
    python app/main.py
    ```
 
----
 
 ### Creating an Executable (.exe) for Windows
 
@@ -81,7 +78,6 @@ To run as a standalone executable on Windows:
 5. **Locate Executable**  
    The generated executable will be in the `dist/` folder.
 
----
 
 ## Todo List
 
@@ -100,7 +96,6 @@ To run as a standalone executable on Windows:
 - [ ] Lock access after 10 failed login attempts, with an option to recover using a 12-word seed phrase.
 - [ ] Enable OTP-based 2FA (using `pyotp`) for enhanced security.
 
----
 
 ## Completed Features
 
@@ -110,7 +105,6 @@ To run as a standalone executable on Windows:
 - [x] Passwords are hidden and directly pasted to reduce exposure.
 - [x] Memory cleaning for secure password handling using `os_urandom` and `ctypes`.
 
----
 
 ## Planned Features
 
@@ -120,7 +114,6 @@ To run as a standalone executable on Windows:
 - **Text-Based Data Storage**: Save notes and account-related information.
 - **Search Functionality**: Quick search for stored accounts.
 
----
 
 ## Future Implementations
 
