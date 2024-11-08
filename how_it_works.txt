@@ -2,17 +2,22 @@
 ### Authentication Process
 
 1. **User Creation**  
-   When a user creates an account, IRONWARDEN securely hashes the master password using the Argon2 algorithm. This hashing algorithm is designed to resist brute-force attacks by being memory-intensive, meaning it’s computationally expensive to crack. The hashed password is then stored in the database alongside the master username. This ensures that the master password itself is never stored, only its hashed form.
+   When a user creates an account, IRONWARDEN securely hashes the master password using the Argon2 algorithm. This hashing algorithm is designed to resist 
+   brute-force attacks by being memory-intensive, meaning it’s computationally expensive to crack. The hashed password is then stored in the database 
+   alongside the master username. This ensures that the master password itself is never stored, only its hashed form.
 
 2. **User Authentication**  
-   To authenticate a user, IRONWARDEN retrieves the stored hash of the master password associated with the provided username. It then verifies the entered password against the stored hash using Argon2. If the verification is successful, the user gains access to the system.
+   To authenticate a user, IRONWARDEN retrieves the stored hash of the master password associated with the provided username. It then verifies the entered 
+   password against the stored hash using Argon2. If the verification is successful, the user gains access to the system.
 
 ### Password Storage and Retrieval
 
 Passwords for individual sites or accounts are stored securely by leveraging encryption and key derivation:
 
 1. **Encryption Key Derivation**  
-   When storing or retrieving a password, IRONWARDEN derives a unique encryption key from the master password using PBKDF2-HMAC with SHA-256 as the hash function. This derivation process combines the master password with a randomly generated salt specific to each entry and applies multiple iterations of hashing. This produces a strong, unique key for encryption.
+   When storing or retrieving a password, IRONWARDEN derives a unique encryption key from the master password using PBKDF2-HMAC with SHA-256 as the hash
+    function. This derivation process combines the master password with a randomly generated salt specific to each entry and applies multiple iterations
+     of hashing. This produces a strong, unique key for encryption.
 
 2. **Password Encryption**  
    To store a password, IRONWARDEN:
@@ -21,7 +26,8 @@ Passwords for individual sites or accounts are stored securely by leveraging enc
    - Uses AES encryption in CBC mode with the derived key and IV.
    - Pads the password data using PKCS7 padding, encrypts it, and stores the salt, IV, and encrypted password in the database.
    
-   This process ensures that each stored password is encrypted uniquely, even if the same password is stored for multiple sites, due to the unique salt and IV per entry.
+   This process ensures that each stored password is encrypted uniquely, even if the same password is stored for multiple sites, due to the unique salt 
+   and IV per entry.
 
 3. **Password Decryption**  
    When retrieving a stored password, IRONWARDEN:
@@ -33,7 +39,10 @@ Passwords for individual sites or accounts are stored securely by leveraging enc
 ### Data Protection Summary
 
 - **Argon2 Hashing**: Securely hashes the master password for authentication, making it resistant to brute-force attacks.
-- **AES Encryption with PBKDF2-derived Key**: Encrypts individual passwords using a key derived from the master password and salt, ensuring that each password entry is uniquely protected.
-- **SQLite Database**: Stores hashed credentials, salts, IVs, and encrypted passwords, providing an organized and secure database structure for managing stored credentials.
+- **AES Encryption with PBKDF2-derived Key**: Encrypts individual passwords using a key derived from the master password and salt, ensuring that each 
+   password entry is uniquely protected.
+- **SQLite Database**: Stores hashed credentials, salts, IVs, and encrypted passwords, providing an organized and secure database structure for managing 
+   stored credentials.
 
-This multi-layered approach of hashing, key derivation, and encryption ensures that both the master password and individual stored passwords are highly protected, even in the event of unauthorized database access.
+This multi-layered approach of hashing, key derivation, and encryption ensures that both the master password and individual stored passwords are highly protected, 
+even in the event of unauthorized database access.
