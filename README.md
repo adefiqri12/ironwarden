@@ -42,7 +42,7 @@ Python 3.10
 - [x] Add id and email to corresponding stored password
 - [ ] Edit stored password
 - [x] The Password will be not shown but automatically paste
-- [ ] Cleaning memory after master_password or stored password been call using os_urandom and ctypes
+- [x] Cleaning memory after master_password or stored password been call using os_urandom and ctypes
 
 ## Second Todolist
 -----------------

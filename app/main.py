@@ -3,6 +3,7 @@ import sys
 import pyperclip
 import os
 import getpass 
+import ctypes
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
@@ -18,13 +19,58 @@ def clear_screen():
     else:  # For macOS and Linux
         os.system('clear')
 
+import ctypes
+
+def secure_clear(data):
+    """
+    Securely clear sensitive data from memory.
+
+    This function attempts to overwrite the contents of the provided data
+    with zeros to reduce the risk of sensitive information being left in
+    memory. It handles both bytearrays and strings, converting strings into
+    bytearrays before clearing. After clearing the content, it returns None
+    to remove references to the data.
+
+    Args:
+        data (str or bytearray): The sensitive data to be cleared from memory.
+
+    Returns:
+        None
+    """
+    if data is None or data == "":
+        return None
+    if isinstance(data, bytearray):
+        ctypes.memset(ctypes.addressof(ctypes.c_char.from_buffer(data)), 0, len(data))
+    elif isinstance(data, str):
+        data_bytes = bytearray(data.encode())
+        ctypes.memset(ctypes.addressof(ctypes.c_char.from_buffer(data_bytes)), 0, len(data_bytes))
+    return None
+
+def exit_program(conn, *args):
+    """Clears sensitive data, closes the database connection, clears the screen, and exits the program."""
+    # Clear sensitive data
+    for arg in args:
+        if arg is not None:  # Only clear if the variable is not None
+            arg = secure_clear(arg)
+    # Close database connection if open
+    if conn:
+        conn.close()
+    clear_screen()
+    sys.exit()
+
 def main():
     conn, cursor = init_db()
     if conn is None or cursor is None:
         print("Failed to initialize database. Exiting.")
         return
+    
+    login_username = None
+    login_password = None
+    retrieved_password = None
+    sites = None
+
     clear_screen()
-    print_ascii_welcome()
+    print_ascii_welcome()    
     while True:
         print("1. Login")
         print("2. Create a New Account")
@@ -49,7 +95,7 @@ def main():
                     
                     if option == '1':
                         # Store a new password
-                        site_name = input("Enter the account name or ID: ")
+                        site_name = input("Enter new account name or ID: ")
                         password_to_store = input("Enter the password to store: ")
                         start_time = time.time()
                         store_encrypted_password(cursor, conn, login_username, site_name, password_to_store, login_password)
@@ -84,9 +130,7 @@ def main():
                             print("No stored passwords found.")
                     
                     elif option == '3':
-                        # Logout
-                        print(f"Logging out {login_username}...")
-                        sys.exit()
+                        exit_program(conn, login_username, login_password, retrieved_password, sites)
                     else:
                         print("Invalid option. Please choose again.")
             else:
@@ -100,16 +144,9 @@ def main():
             else:
                 create_user(cursor, conn, new_master_username, new_master_password)
         elif choice == '3':
-            # Exit the program
-            clear_screen()
-            break
+            exit_program(conn, login_username, login_password, retrieved_password, sites)
         else:
             print("Invalid choice. Please choose again.")
-
-    # Close the database connection when done
-    conn.close()
-    clear_screen()
-    sys.exit()
 
 if __name__ == "__main__":
     main()
