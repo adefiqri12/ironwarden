@@ -1,133 +1,133 @@
 # IRONWARDEN
-Password Manager Program v0.1
-The Login system using Argon2
 
-The stored data using 
+**IRONWARDEN** is a simple CLI-based password manager designed for secure storage and management of passwords in local desktop. Ironwarden securely stores and manages passwords using a combination of Argon2 hashing, AES encryption, and a SQLite database. When a user creates an account, their master password is hashed with Argon2 and stored in the database. Argon2 is designed to resist brute-force attacks by being memory-intensive, meaning it’s computationally expensive to crack.
+For authentication, the entered password is verified against the stored hash. Individual site passwords are encrypted using AES with a key derived from the master password and a unique salt for each entry. The encrypted password, along with the salt and initialization vector (IV), is saved in the database. This ensures that both the master password and stored passwords are protected through strong encryption and hashing, even if the database is compromised. 
 
-Python 3.10
+For a detailed explanation, refer to [how_it_works.txt](how_it_works.txt).
+
+## Current Build
+**Version**: v0.2
 
 ## Table of Contents
----------------
-* [Features](#features)
-* [Installation](#installation)
-* [Planned Features](#planned-features)
-* [First Todolist](#first-todolist)
-* [Second Todolist](#second-todolist)
 
-## Features
----------------
-
-* **Login Setup**: Create a new account and login to the program
-* **Sqlite Database**: Store user data securely in a SQLite database
-* **Master Password**: Set a master password to secure your all data
-* **Password Storage**: CRUD (Create, Read, Update, Delete) operations for storing passwords for different sites or IDs
-
-## Installation
----------------
-
-#### 1. **Running Directly in the Terminal**
-
-1. **Install Python 3.10+**:
-   - Ensure Python 3.10+ is installed. [Download Python](https://www.python.org/downloads/).
-
-2. **Install Dependencies**:
-   - Clone or download the repository.
-   - Navigate to the project directory and install the required packages from `requirements.txt`:
-     ```bash
-     pip install -r requirements.txt
-     ```
-
-3. **Run the Application**:
-   - After installing the dependencies, run the password manager directly in the terminal:
-     ```bash
-     python app/main.py
-     ```
+- [Features](#features)
+- [Installation](#installation)
+- [Todo List](#todo-list)
+- [Completed Features](#completed-features)
+- [Planned Features](#planned-features)
+- [Future Implementations](#future-implementations)
 
 ---
 
-#### 2. **Creating the Executable (.exe)**
+## Features
 
-If you prefer to create a standalone executable (`.exe`) for Windows without open the terminal, follow these steps:
+- **Login Setup**: Create a new account and log in to access the program.
+- **SQLite Database**: Securely stores user data within a SQLite database.
+- **Master Password**: Set a master password to protect all stored data.
+- **Password Management**: Includes full CRUD (Create, Read, Update, Delete) operations for storing and managing passwords for various sites or IDs.
 
-1. **Install Dependencies**:
-   - Ensure Python 3.10+ is installed. [Download Python](https://www.python.org/downloads/).
-   - Install PyInstaller:
-     ```bash
-     pip install pyinstaller
-     ```
+---
 
-2. **Add `Scripts` to `PATH`** (if not already done):
-   - Add `C:\Users\<YourUsername>\AppData\Roaming\Python\Python310\Scripts` to your system’s `PATH` environment variable.
+## Installation
 
-3. **Verify Installation**:
-   - Check Python version:
-     ```bash
-     python --version
-     ```
-   - Ensure PyInstaller is installed:
-     ```bash
-     pip show pyinstaller
-     ```
+### Running Directly in the Terminal
 
-4. **Create Executable**:
-   - Navigate to your project directory and run:
-     ```bash
-     pyinstaller --onefile --name Ironwarden --icon=icon.ico app/main.py
-     ```
+1. **Install Python 3.10+**  
+   Ensure Python 3.10 or later is installed. [Download Python](https://www.python.org/downloads/).
 
-   If `pyinstaller` isn't recognized, try running with the full path:
+2. **Install Dependencies**  
+   Clone or download the repository, then navigate to the project directory and install dependencies with:
    ```bash
-   C:\Users\<YourUsername>\AppData\Roaming\Python\Python310\Scripts\pyinstaller --onefile --name Ironwarden --icon=icon.ico app/main.py
+   pip install -r requirements.txt
    ```
 
-5. **Locate Executable**:
-   - After the build completes, find the executable in the `dist/` folder.
+3. **Run the Application**  
+   To launch the password manager, use:
+   ```bash
+   python app/main.py
+   ```
+
+---
+
+### Creating an Executable (.exe) for Windows
+
+To run as a standalone executable on Windows:
+
+1. **Install Dependencies**  
+   Install Python 3.10+ and then PyInstaller:
+   ```bash
+   pip install pyinstaller
+   ```
+
+2. **Add Scripts to PATH**  
+   Add `C:\Users\<YourUsername>\AppData\Roaming\Python\Python310\Scripts` to your system’s `PATH` if not already done.
+
+3. **Verify Installations**  
+   Confirm Python and PyInstaller installation:
+   ```bash
+   python --version
+   pip show pyinstaller
+   ```
+
+4. **Create Executable**  
+   In the project directory, run:
+   ```bash
+   pyinstaller --onefile --name Ironwarden --icon=icon.ico app/main.py
+   ```
+
+5. **Locate Executable**  
+   The generated executable will be in the `dist/` folder.
+
+---
+
+## Todo List
+
+- [ ] Edit master password with a 12-word seed phrase.
+- [ ] Create a one-click app to avoid terminal use.
+- [ ] Enable cloud backup for database storage.
+- [x] Add randomly generated, readable usernames with an expanded English dictionary.
+- [ ] Implement automatic password generation with customizable options:
+    - Only numbers (for PINs)
+    - Lowercase only
+    - Mixed case
+    - Mixed case with numbers
+    - Mixed case with numbers and special characters
+- [ ] Add support for text-based data storage (e.g., notes).
+- [ ] Implement a search feature for stored accounts.
+- [ ] Lock access after 10 failed login attempts, with an option to recover using a 12-word seed phrase.
+- [ ] Enable OTP-based 2FA (using `pyotp`) for enhanced security.
+
+---
+
+## Completed Features
+
+- [x] Login setup with account creation.
+- [x] Integrated SQLite database for data storage.
+- [x] Added edit and delete options for stored passwords.
+- [x] Passwords are hidden and directly pasted to reduce exposure.
+- [x] Memory cleaning for secure password handling using `os_urandom` and `ctypes`.
+
+---
 
 ## Planned Features
--------------------
 
-* **Save Database to Cloud**: Save the database to cloud for backup
-* **Random Generated Username**: Generate random readable usernames
-* **Automated Password Creation**: Automatically create stored passwords using a dictionary
-* **Text-Based Data Storage**: Store text-based data, such as notes and accounts
-* **Searching Feature**: Add a searching feature for account search
+- **Cloud Backup**: Secure database backups to the cloud.
+- **Readable Random Usernames**: Enhanced random username generator.
+- **Automatic Password Creation**: Generate passwords based on predefined criteria.
+- **Text-Based Data Storage**: Save notes and account-related information.
+- **Search Functionality**: Quick search for stored accounts.
 
-## First Todolist
------------------
+---
 
-- [x] Add login setup (create)
-- [x] Add sqlite database
-- [x] Edit and delete stored password
-- [x] The Password will be not shown but automatically paste
-- [x] Cleaning memory after master_password or stored password been call using os_urandom and ctypes
-- [ ] Edit master password with 12 seed phrase
-- [ ] Create one click app not run it from terminal
+## Future Implementations
 
-## Second Todolist
------------------
+- **Device-Specific Salt**  
+   Store a unique, device-specific salt locally. This device-bound salt, combined with the master password, ensures that encrypted passwords remain secure and accessible only from authorized devices.
 
-- [ ] Save the database to cloud (for backup)
-- [x] Random generated username (readable)
-	+ Add more english noun into dictionary
-- [ ] Automatically create the stored password using dictionary (it can be reloaded until user satisfaction)
-- [ ] The automated created password, can be selected to include:
-	+ only 6 number (for pin)
-	+ only lowercase
-	+ uppercase and lowercase
-	+ uppercase, lowercase, and number 0-9
-	+ uppercase, lowercase, number 0-9, and special character
-- [ ] Add option to save text-based data, the program option look alike:
-	+ save account and password
-	+ save note/text
-- [ ] Add searching feature for account search
-- [ ] (?) Add login attempt to master password if failed 10 times, it will ask 12 word seedphrase
-- [ ] Implement OTP for Two-Factor Authentication (2FA) using pyotp if master password forget
+- **Encrypted Backup and Recovery**  
+   Add a secondary passphrase for backup restoration if primary credentials are lost after repeated login failures.
 
-## Feature Implementation
------------------
+- **Enhanced Password Security with Pepper**  
+   Incorporate a "pepper," an extra secret value stored outside the database, into the password hashing process. This additional security layer further protects against brute-force attacks in case of database breaches.
 
-* **Utilize a Unique Device-Based Salt**: Generate and store a device-specific salt in addition to the one used in PBKDF2. This salt should be unique to each device the user logs in from and stored locally on that device. Combining the master password and device salt ensures that the encrypted passwords are bound to a specific device, limiting accessibility if the master password alone is compromised.
-
-* **Encrypted Backup and Recovery of Encrypted Data**: If a user is locked out after 10 attempts and loses the recovery code, they should still be able to restore their data with a backup encrypted with a secondary password or passphrase.
-
-* **Consider Using a Hash Function with Pepper for Master Password Verification**:A pepper is an additional value, stored separately from the password database (e.g., in the application code or in a secure environment variable). It can be added to the password before hashing, making it more difficult for an attacker to brute-force even if they gain access to the database. This method requires securely storing the pepper outside the database and only using it during authentication.
+---
