@@ -9,7 +9,7 @@ For authentication, the entered password is verified against the stored hash. In
 For a detailed explanation, refer to [how_it_works.txt](how_it_works.txt).
 
 ## Current Build
-**Version**: v0.2
+**Version**: v0.1
 
 ## Table of Contents
 
@@ -103,7 +103,7 @@ To run as a standalone executable on Windows:
 - [x] Integrated SQLite database for data storage.
 - [x] Added edit and delete options for stored passwords.
 - [x] Passwords are hidden and directly pasted to reduce exposure.
-- [x] Memory cleaning for secure password handling using `os_urandom` and `ctypes`.
+- [x] Memory cleaning for secure password handling using `ctypes`.
 
 
 ## Planned Features
