@@ -1,5 +1,5 @@
+# IRONWARDEN
 # Password Manager Program
-=====================================
 
 ## Table of Contents
 ---------------
@@ -37,12 +37,12 @@
 ## First Todolist
 -----------------
 
-* Add login setup (create) [x]
-* Add sqlite database [x]
-* Edit master password 
-* Add id and email to corresponding stored password
-* Edit stored password
-* Cleaning memory after master_password or stored password been call using os_urandom and ctypes
+* [x] Add login setup (create)
+* [x] Add sqlite database
+* [] Edit master password 
+* [] Add id and email to corresponding stored password
+* [] Edit stored password
+* [] Cleaning memory after master_password or stored password been call using os_urandom and ctypes
 
 ## Second Todolist
 -----------------
