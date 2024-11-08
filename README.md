@@ -19,6 +19,7 @@ For a detailed explanation, refer to [how_it_works.txt](how_it_works.txt).
 - [Completed Features](#completed-features)
 - [Planned Features](#planned-features)
 - [Future Implementations](#future-implementations)
+- [Disclaimer](#disclaimer)
 
 
 ## Features
@@ -125,5 +126,20 @@ To run as a standalone executable on Windows:
 
 - **Enhanced Password Security with Pepper**  
    Incorporate a "pepper," an extra secret value stored outside the database, into the password hashing process. This additional security layer further protects against brute-force attacks in case of database breaches.
+
+
+## Disclaimer
+
+### USE AT YOUR OWN RISK
+
+The author of this software is not responsible for any data created or lost while using this program. This program is provided "as-is" without warranty of any kind, express or implied. By using this program, you acknowledge that you understand and agree to this disclaimer.
+
+You are responsible for ensuring the security and integrity of your data. The author is not liable for any damages or losses resulting from the use of this program.
+
+### BACK UP YOUR DATA REGULARLY
+
+It is your responsibility to regularly back up your data to prevent loss in case of software failure or other unforeseen circumstances.
+
+By using this program, you acknowledge that you have read and understood this warning and disclaimer.
 
 ---
