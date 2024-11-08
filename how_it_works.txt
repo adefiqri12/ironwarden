@@ -16,8 +16,8 @@ Passwords for individual sites or accounts are stored securely by leveraging enc
 
 1. **Encryption Key Derivation**  
    When storing or retrieving a password, IRONWARDEN derives a unique encryption key from the master password using PBKDF2-HMAC with SHA-256 as the hash
-    function. This derivation process combines the master password with a randomly generated salt specific to each entry and applies multiple iterations
-     of hashing. This produces a strong, unique key for encryption.
+   function. This derivation process combines the master password with a randomly generated salt specific to each entry and applies multiple iterations
+   of hashing. This produces a strong, unique key for encryption.
 
 2. **Password Encryption**  
    To store a password, IRONWARDEN:
@@ -40,9 +40,9 @@ Passwords for individual sites or accounts are stored securely by leveraging enc
 
 - **Argon2 Hashing**: Securely hashes the master password for authentication, making it resistant to brute-force attacks.
 - **AES Encryption with PBKDF2-derived Key**: Encrypts individual passwords using a key derived from the master password and salt, ensuring that each 
-   password entry is uniquely protected.
+    password entry is uniquely protected.
 - **SQLite Database**: Stores hashed credentials, salts, IVs, and encrypted passwords, providing an organized and secure database structure for managing 
-   stored credentials.
+    stored credentials.
 
 This multi-layered approach of hashing, key derivation, and encryption ensures that both the master password and individual stored passwords are highly protected, 
 even in the event of unauthorized database access.
