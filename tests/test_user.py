@@ -1,8 +1,8 @@
 import unittest
 from unittest.mock import Mock, patch
 import sqlite3
-import bcrypt
-from user import create_user, authenticate_user
+from argon2 import PasswordHasher
+from app.user import create_user, authenticate_user
 import sys, pathlib
 
 # Add the parent directory to the Python path
@@ -15,6 +15,7 @@ class TestUser(unittest.TestCase):
         self.conn = Mock()
         self.username = "testuser"
         self.password = "testpass123"
+        self.ph = PasswordHasher()
 
     def test_create_user_success(self):
         """Test successful user creation."""
@@ -27,7 +28,7 @@ class TestUser(unittest.TestCase):
         # Verify the stored password is properly hashed
         call_args = self.cursor.execute.call_args[0]
         stored_hash = call_args[1][1]
-        self.assertTrue(bcrypt.checkpw(self.password.encode(), stored_hash))
+        self.assertTrue(self.ph.verify(stored_hash, self.password))
 
     def test_create_user_duplicate(self):
         """Test handling of duplicate username."""
@@ -56,7 +57,7 @@ class TestUser(unittest.TestCase):
     def test_authenticate_user_success(self):
         """Test successful user authentication."""
         # Create hashed password
-        hashed_password = bcrypt.hashpw(self.password.encode(), bcrypt.gensalt())
+        hashed_password = self.ph.hash(self.password)
         self.cursor.fetchone.return_value = (hashed_password,)
         
         result = authenticate_user(self.cursor, self.username, self.password)
@@ -69,7 +70,7 @@ class TestUser(unittest.TestCase):
 
     def test_authenticate_user_wrong_password(self):
         """Test authentication with wrong password."""
-        hashed_password = bcrypt.hashpw(self.password.encode(), bcrypt.gensalt())
+        hashed_password = self.ph.hash(self.password)
         self.cursor.fetchone.return_value = (hashed_password,)
         
         result = authenticate_user(self.cursor, self.username, "wrongpass")

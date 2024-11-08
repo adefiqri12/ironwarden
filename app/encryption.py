@@ -17,17 +17,14 @@ def derive_key(password, salt, iterations=100000):
 
 # Encrypt a password and store it in the database
 def store_encrypted_password(cursor, conn, username, site_name, password, master_password):
-
     salt = os.urandom(16)
     key = derive_key(master_password, salt)
     iv = os.urandom(16)
     cipher = Cipher(algorithms.AES(key), modes.CBC(iv), backend=default_backend())
     encryptor = cipher.encryptor()
-    
     padder = padding.PKCS7(128).padder()
     padded_data = padder.update(password.encode()) + padder.finalize()
     encrypted_password = encryptor.update(padded_data) + encryptor.finalize()
-    
     cursor.execute("INSERT INTO stored_passwords (username, site_name, salt, iv, encrypted_password) VALUES (?, ?, ?, ?, ?)",
                 (username, site_name, salt, iv, encrypted_password))
     conn.commit()
@@ -43,9 +40,7 @@ def retrieve_encrypted_password(cursor, username, site_name, master_password):
         key = derive_key(master_password, salt)
         cipher = Cipher(algorithms.AES(key), modes.CBC(iv), backend=default_backend())
         decryptor = cipher.decryptor()
-        
         padded_data = decryptor.update(encrypted_password) + decryptor.finalize()
-        
         unpadder = padding.PKCS7(128).unpadder()
         password = unpadder.update(padded_data) + unpadder.finalize()
         return password.decode()

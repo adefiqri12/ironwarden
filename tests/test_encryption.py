@@ -7,7 +7,7 @@ import pathlib
 # Add the parent directory to the Python path
 sys.path.append(str(pathlib.Path(__file__).parent.parent))
 
-from encryption import derive_key, store_encrypted_password, retrieve_encrypted_password
+from app.encryption import derive_key, store_encrypted_password, retrieve_encrypted_password
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.backends import default_backend
 

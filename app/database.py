@@ -1,5 +1,6 @@
 import sqlite3
 import os
+import sys
 
 def init_db(db_name='password_manager.db'):
     # Check if the database file already exists
@@ -28,13 +29,12 @@ def init_db(db_name='password_manager.db'):
                 salt BLOB,
                 iv BLOB,
                 encrypted_password BLOB,
-                FOREIGN KEY (username) REFERENCES users(username)
+                FOREIGN KEY (username) REFERENCES users(master_username)
             )
             ''')
             conn.commit()
-            print("Database and tables initialized.")
         else:
-            print("Database already exists, skipping table creation.")
+            print("Database already exists")
         
         return conn, cursor
     

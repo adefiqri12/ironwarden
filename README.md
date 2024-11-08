@@ -1,12 +1,16 @@
 # IRONWARDEN
-# Password Manager Program
+Password Manager Program v0.1
+The Login system using Argon2
+
+The stored data using 
+
+Python 3.10
 
 ## Table of Contents
 ---------------
 
 * [Features](#features)
 * [Planned Features](#planned-features)
-* [Done Features](#done-features)
 * [First Todolist](#first-todolist)
 * [Second Todolist](#second-todolist)
 
@@ -35,23 +39,26 @@
 - [x] Add login setup (create)
 - [x] Add sqlite database
 - [ ] Edit master password 
-- [ ] Add id and email to corresponding stored password
+- [x] Add id and email to corresponding stored password
 - [ ] Edit stored password
+- [x] The Password will be not shown but automatically paste
 - [ ] Cleaning memory after master_password or stored password been call using os_urandom and ctypes
 
 ## Second Todolist
 -----------------
 
-* Save the database to cloud (for backup)
-* Random generated username (readable)
-* Automatically create the stored password using dictionary (it can be reloaded until user satisfaction)
-* The automated created password, can be selected to include:
+- [ ] Save the database to cloud (for backup)
+- [x] Random generated username (readable)
+	+ Add more english noun into dictionary
+- [ ] Automatically create the stored password using dictionary (it can be reloaded until user satisfaction)
+- [ ] The automated created password, can be selected to include:
 	+ only 6 number (for pin)
 	+ only lowercase
 	+ uppercase and lowercase
 	+ uppercase, lowercase, and number 0-9
 	+ uppercase, lowercase, number 0-9, and special character
-* Add option to save text-based data, the program option look alike:
+- [ ] Add option to save text-based data, the program option look alike:
 	+ save account and password
 	+ save note/text
-* Add searching feature for account search
+- [ ] Add searching feature for account search
+- [ ] (?) Add login attempt to master password if failed 10 times, it will ask 12 word seedphrase

@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import Mock, patch
 import os
 import sqlite3
-from database import init_db
+from app.database import init_db
 import sys, pathlib
 
 # Add the parent directory to the Python path
@@ -67,7 +67,7 @@ class TestDatabase(unittest.TestCase):
             conn2, cursor2 = init_db(self.test_db)
             
             try:
-                mock_print.assert_called_with("Database already exists, skipping table creation.")
+                mock_print.assert_called_with("Database already exists")
                 self.assertIsNotNone(conn2)
                 self.assertIsNotNone(cursor2)
             finally:
