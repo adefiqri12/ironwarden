@@ -1,6 +1,5 @@
 import sqlite3
 import os
-import sys
 
 def init_db(db_name='password_manager.db'):
     # Check if the database file already exists
