@@ -1,0 +1,11 @@
+.db
+.sqlite
+.sqlite3
+.env
+chroma_*
+chroma
+.DS_Store
+*.pyc
+
+# Ignore __pycache__ folders
+__pycache__/
