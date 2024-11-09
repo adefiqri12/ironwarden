@@ -1,4 +1,4 @@
-![Ironwarden Icon](./ironwarden.png)
+<img src="./ironwarden.png" alt="Ironwarden icon" width="100" height="100">
 # IRONWARDEN
 **IRONWARDEN** is a simple CLI-based password manager designed for secure storage and management of passwords on a local desktop. IRONWARDEN securely stores and manages passwords using a combination of Argon2 hashing, AES encryption, and a SQLite database.
 
