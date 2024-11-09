@@ -75,7 +75,7 @@ To run as a standalone executable on Windows:
    ```
 
 5. **Locate Executable**  
-   The generated executable will be in the `dist/` folder.
+   The generated executable will be in the `dist` folder.
 
 ## Todo List
 
