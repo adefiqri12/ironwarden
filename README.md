@@ -121,6 +121,8 @@ To run as a standalone executable on Windows:
 - [ ] Implement a search feature for stored accounts.
 - [ ] Enable OTP-based 2FA (using `pyotp`) for enhanced security.
 
+---
+
 ## Disclaimer
 
 ### USE AT YOUR OWN RISK
