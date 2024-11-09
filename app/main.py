@@ -3,6 +3,7 @@ import pyperclip
 import os
 import getpass 
 import ctypes
+import sqlite3
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
@@ -36,46 +37,50 @@ def exit_program(conn, *args):
     clear_screen()
     sys.exit()
 
+def display_menu():
+    clear_screen()
+    print_ascii_welcome()
+    print("1. Login")
+    print("2. Create a New Master Account")
+    print("3. Delete an Existing Master Account")
+    print("4. Exit")
+
 def main():
     conn, cursor = init_db()
     if conn is None or cursor is None:
-        print("Failed to initialize database. Exiting.")
+        print("Error: Failed to initialize database. Exiting.")
         return
-
-    clear_screen()
-    print_ascii_welcome()
-
-    login_username = None
-    login_password = None
+    
+    master_username = None
+    master_password = None
 
     while True:
-        clear_screen()
-        print_ascii_welcome()
-        print("1. Login")
-        print("2. Create a New Account")
-        print("3. Exit")
+        display_menu()
         choice = input("Enter your choice: ")
-
         if choice == '1':
-            handle_login(conn, cursor, login_username, login_password)
+            handle_login(conn, cursor, master_username, master_password)
         elif choice == '2':
-            create_new_account(conn, cursor)
+            create_new_master_account(conn, cursor)
         elif choice == '3':
-            exit_program(conn, login_username, login_password)
+            delete_master_account(conn, cursor)
+        elif choice == '4':
+            exit_program(conn, master_username, master_password)
         else:
-            print("Invalid choice. Please choose again.")
+            print("Error: Please select a valid option.")
 
-def handle_login(conn, cursor, login_username, login_password):
-    login_username = input("Enter your username: ")
-    login_password = getpass.getpass("Enter your master password: ")
+def handle_login(conn, cursor, master_username, master_password):
+    master_username = input("Enter your username: ")
+    account = find_master_account(cursor, master_username)
+    if account is None:
+        input("Error: Username does not exist.")
+        return
+    master_password = getpass.getpass("Enter your master password: ")
 
-    if authenticate_user(cursor, login_username, login_password):
-        print(f"Welcome, {login_username}!")
-        handle_password_operations(conn, cursor, login_username, login_password)
-    else:
-        print("Login failed. Please try again.")
+    if authenticate_user(cursor, master_username, master_password):
+        print(f"\nWelcome, {master_username}!")
+        handle_password_operations(conn, cursor, master_username, master_password)
 
-def handle_password_operations(conn, cursor, login_username, login_password):
+def handle_password_operations(conn, cursor, master_username, master_password):
     while True:
         print("1. Store a new password")
         print("2. Retrieve a password")
@@ -84,42 +89,74 @@ def handle_password_operations(conn, cursor, login_username, login_password):
         print("5. Logout")
         option = input("Choose an option: ")
         if option == '1':
-            store_password(conn, cursor, login_username, login_password)
+            store_password(conn, cursor, master_username, master_password)
         elif option == '2':
-            retrieve_password(cursor, login_username, login_password)
+            retrieve_password(cursor, master_username, master_password)
         elif option == '3':
-            delete_password(conn, cursor, login_username)
+            delete_password(conn, cursor, master_username)
         elif option == '4':
-            update_password(conn, cursor, login_username, login_password)
+            update_password(conn, cursor, master_username, master_password)
         elif option == '5':
-            exit_program(conn, login_username, login_password)
+            exit_program(conn, master_username, master_password)
         else:
-            print("Invalid option. Please choose again.")
+            print("Error: Please select a valid option.")
 
-def create_new_account(conn, cursor):
+def create_new_master_account(conn, cursor):
     guideline()
     common_usernames = load_common_credentials("username")
     common_passwords = load_common_credentials("password") 
+    # Loop until a valid and unique username is provided
     while True:
         new_master_username = input("Enter your new master username: ")
         if is_valid_username(new_master_username, common_usernames):
-            break
-        else:
-            print()
+            # Attempt to create the user immediately to check for duplicates
+            if create_user(cursor, conn, new_master_username, check_only=True):
+                print("Username is available.")
+                break  # Username is valid and unique
+            else:
+                print("Username already exists. Please try a different username.")
+
+    # Now ask for the password
     while True:
         new_master_password = getpass.getpass("Enter your new master password: ")
         if is_strong_password(new_master_password, common_passwords):
             confirm_password = getpass.getpass("Confirm your new master password: ")
             if new_master_password == confirm_password:
+                # Finalize account creation with the validated password
                 create_user(cursor, conn, new_master_username, new_master_password)
-                input("Account created successfully.\nPress Enter or type anything to continue...")
+                input("Account created successfully.")
                 break
             else:
-                print("Passwords do not match. Please try again.")
+                print("Error: Passwords do not match. Please try again.")
         else:
-            print()
+            print("Password does not meet strength requirements. Please try again.\n")
 
-def store_password(conn, cursor, login_username, login_password):
+def delete_master_account(conn, cursor):
+    master_username = input("Enter the username of the account to delete: ")
+    account = find_master_account(cursor, master_username)
+    if account is None:
+        input("Error: Username does not exist.")
+        return
+    master_password = getpass.getpass("Enter the password for this account to confirm deletion: ")
+    if not authenticate_user(cursor, master_username, master_password):
+        return
+    confirmation = input(f"Are you sure you want to delete the account '{master_username}'? This action is irreversible (yes/no): ")
+    if confirmation.lower() == 'yes':
+        if db_delete_master_account(conn, cursor, master_username):
+            input(f"Account '{master_username}' has been successfully deleted.")
+    else:
+        input("Account deletion canceled.")
+
+def db_delete_master_account(conn, cursor, master_username):
+    try:
+        cursor.execute("DELETE FROM users WHERE master_username = ?", (master_username,))
+        conn.commit()
+        return True
+    except sqlite3.Error as e:
+        print(f"Error deleting account: {e}")
+        return False
+
+def store_password(conn, cursor, master_username, master_password):
     site_name = input("Enter new account name or ID: ")
     use_generated_password = input("Do you want to generate a password? (y/n): ").strip().lower()
 
@@ -128,41 +165,41 @@ def store_password(conn, cursor, login_username, login_password):
         print(f"Generated Password: {password_to_store}")
     else:
         password_to_store = input("Enter the password to store: ")
-    store_encrypted_password(cursor, conn, login_username, site_name, password_to_store, login_password)
+    store_encrypted_password(cursor, conn, master_username, site_name, password_to_store, master_password)
     print(f"Password for '{site_name}' stored successfully.")
 
-def retrieve_password(cursor, login_username, login_password):
-    sites = get_stored_sites(cursor, login_username)
+def retrieve_password(cursor, master_username, master_password):
+    sites = get_stored_sites(cursor, master_username)
     if sites:
         display_sites(sites)
         choice = get_user_choice(len(sites))
         if choice is not None:
             selected_site = sites[choice][0]
-            retrieved_password = retrieve_encrypted_password(cursor, login_username, selected_site, login_password)
+            retrieved_password = retrieve_encrypted_password(cursor, master_username, selected_site, master_password)
             if retrieved_password:
                 pyperclip.copy(retrieved_password)
                 print(f"Password for '{selected_site}' has been copied to your clipboard.")
             else:
                 print("Failed to retrieve password.")
     else:
-        print("No stored passwords found.")
+        print("Error: No stored passwords found.")
 
-def delete_password(conn, cursor, login_username):
-    sites = get_stored_sites(cursor, login_username)
+def delete_password(conn, cursor, master_username):
+    sites = get_stored_sites(cursor, master_username)
     if sites:
         display_sites(sites)
         choice = get_user_choice(len(sites))
         if choice is not None:
             selected_site = sites[choice][0]
             cursor.execute("DELETE FROM stored_passwords WHERE username = ? AND site_name = ?", 
-                        (login_username, selected_site))
+                        (master_username, selected_site))
             conn.commit()
             print(f"Account '{selected_site}' has been deleted successfully.")
     else:
-        print("No stored passwords to delete.")
+        print("Error: No stored passwords to delete.")
 
-def update_password(conn, cursor, login_username, login_password):
-    sites = get_stored_sites(cursor, login_username)
+def update_password(conn, cursor, master_username, master_password):
+    sites = get_stored_sites(cursor, master_username)
     if sites:
         display_sites(sites)
         choice = get_user_choice(len(sites))
@@ -174,11 +211,11 @@ def update_password(conn, cursor, login_username, login_password):
                 print(f"Generated Password for'{selected_site}': {new_password}")
             else:
                 new_password = input(f"Enter the new password for '{selected_site}': ")
-            update_encrypted_password(cursor, conn, login_username, selected_site, new_password, login_password)
+            update_encrypted_password(cursor, conn, master_username, selected_site, new_password, master_password)
             pyperclip.copy(new_password)
             print(f"Password for '{selected_site}' has been updated successfully and copied.")
     else:
-        print("No stored passwords found.")
+        print("Error: No stored passwords found.")
 
 # Helper function to display stored sites
 def display_sites(sites):
@@ -200,9 +237,14 @@ def get_user_choice(site_count):
         return None
 
 # Helper function to get stored sites
-def get_stored_sites(cursor, login_username):
-    cursor.execute("SELECT site_name FROM stored_passwords WHERE username = ?", (login_username,))
+def get_stored_sites(cursor, master_username):
+    cursor.execute("SELECT site_name FROM stored_passwords WHERE username = ?", (master_username,))
     return cursor.fetchall()
+
+def find_master_account(cursor, master_username):
+    """Check if a user exists in the database."""
+    cursor.execute("SELECT * FROM users WHERE master_username = ?", (master_username,))
+    return cursor.fetchone()
 
 if __name__ == "__main__":
     main()

@@ -46,13 +46,13 @@ def is_common_username(username, common_usernames):
 def is_valid_username(username, common_usernames):
     """Check if the username meets guidelines and is not a common username."""
     if len(username) < 5:
-        print("Username must be at least 5 characters.", end="")
+        print("Username must be at least 5 characters.")
         return False
     if is_common_username(username, common_usernames):
-        print(f"Username '{username}' is too similar to a common username.     ", end="")
+        print(f"Username '{username}' is too similar to a common username.")
         return False
     if username.isnumeric():
-        print("Username should not be purely numbers.", end="")
+        print("Username should not be purely numbers.")
         return False
     return True
 
@@ -81,18 +81,18 @@ def is_common_password(password, common_passwords):
 def is_strong_password(password, common_passwords):
     """Check if the password meets security guidelines."""
     if len(password) < 8 :
-        print("Password should be at least 8 characters.", end="")
+        print("Password should be at least 8 characters.")
         return False
     if not re.search(r'[A-Z]', password):
-        print("Password should contain at least one uppercase letter.", end="")
+        print("Password should contain at least one uppercase letter.")
         return False
     if not re.search(r'[a-z]', password):
-        print("Password should contain at least one lowercase letter.", end="")
+        print("Password should contain at least one lowercase letter.")
         return False
     if not re.search(r'[0-9]', password):
-        print("Password should contain at least one digit.", end="")
+        print("Password should contain at least one digit.")
         return False
     if is_common_password(password, common_passwords):
-        print(f"Password '{password}' is too similar to a common password.     ", end="")
+        print(f"Password '{password}' is too similar to a common password.")
         return False
     return True
