@@ -9,7 +9,7 @@ For authentication, the entered password is verified against the stored hash. In
 
 For a detailed explanation, refer to [how_it_works.txt](how_it_works.txt).
 
-## Current Build
+## Current Build  
 **Version**: v0.1.2
 
 ## Table of Contents
