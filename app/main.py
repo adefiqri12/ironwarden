@@ -167,7 +167,8 @@ def update_password(conn, cursor, login_username, login_password):
             else:
                 new_password = input(f"Enter the new password for '{selected_site}': ")
             update_encrypted_password(cursor, conn, login_username, selected_site, new_password, login_password)
-            print(f"Password for '{selected_site}' has been updated successfully.")
+            pyperclip.copy(new_password)
+            print(f"Password for '{selected_site}' has been updated successfully and copied.")
     else:
         print("No stored passwords found.")
 
