@@ -38,12 +38,14 @@ def generate_mnemonic(wordlist):
     mnemonic = [wordlist[index] for index in words_indices]
     return ' '.join(mnemonic)
 
-def seed_phrase(wordlist_path='/dictionary/bip39.txt'):
+def generate_seed_phrase(wordlist_path='./dictionary/bip39.txt'):
     try:
         wordlist = load_wordlist(wordlist_path)
         seed_phrase = generate_mnemonic(wordlist)
-        print("Generated 12-word seed phrase:", seed_phrase)
+        print("12-word seed phrase:", seed_phrase)
         return seed_phrase
     except Exception as e:
         print(f"An error occurred: {e}")
         return None
+
+generate_seed_phrase()

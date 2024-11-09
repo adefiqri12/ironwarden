@@ -10,7 +10,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from app.database import init_db
 from app.user import create_user, authenticate_user
 from app.encryption import store_encrypted_password, update_encrypted_password, retrieve_encrypted_password
-from app.ascii import print_ascii_welcome
+from app.guideline import print_ascii_welcome
 
 def clear_screen():
     # Check the operating system and clear accordingly

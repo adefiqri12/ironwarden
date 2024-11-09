@@ -14,8 +14,8 @@ def load_wordlist(filename):
 
 def generate_single_username(include_number):
     try:
-        adjective = random.choice(load_wordlist('/dictionary/english-adjectives.txt')).capitalize()
-        noun = random.choice(load_wordlist('/dictionary/english-nouns.txt')).capitalize()
+        adjective = random.choice(load_wordlist('./dictionary/english-adjectives.txt')).capitalize()
+        noun = random.choice(load_wordlist('./dictionary/english-nouns.txt')).capitalize()
     except ValueError as e:
         raise ValueError(f"Error: {str(e)}") from e
     try:

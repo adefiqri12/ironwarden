@@ -1,4 +1,3 @@
-import time
 import sys
 import pyperclip
 import os
@@ -10,7 +9,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from app.database import init_db
 from app.user import create_user, authenticate_user
 from app.encryption import store_encrypted_password, update_encrypted_password, retrieve_encrypted_password
-from app.ascii import print_ascii_welcome
+from app.guideline import print_ascii_welcome, guideline, is_valid_username, is_strong_password, load_common_credentials
 from generator.password_generator import password_generator
 
 def clear_screen():
@@ -29,11 +28,9 @@ def secure_clear(data):
 
 def exit_program(conn, *args):
     """Clears sensitive data, closes the database connection, clears the screen, and exits the program."""
-    # Clear sensitive data
     for arg in args:
         if arg is not None:  # Only clear if the variable is not None
             arg = secure_clear(arg)
-    # Close database connection if open
     if conn:
         conn.close()
     clear_screen()
@@ -52,6 +49,8 @@ def main():
     login_password = None
 
     while True:
+        clear_screen()
+        print_ascii_welcome()
         print("1. Login")
         print("2. Create a New Account")
         print("3. Exit")
@@ -78,7 +77,6 @@ def handle_login(conn, cursor, login_username, login_password):
 
 def handle_password_operations(conn, cursor, login_username, login_password):
     while True:
-        print("\nOptions:")
         print("1. Store a new password")
         print("2. Retrieve a password")
         print("3. Delete a stored password")
@@ -99,14 +97,27 @@ def handle_password_operations(conn, cursor, login_username, login_password):
             print("Invalid option. Please choose again.")
 
 def create_new_account(conn, cursor):
-    new_master_username = input("Enter your new master username: ")
-    new_master_password = getpass.getpass("Enter your new master password: ")
-    confirm_password = getpass.getpass("Confirm your new master password: ")
-    
-    if new_master_password == confirm_password:
-        create_user(cursor, conn, new_master_username, new_master_password)
-    else:
-        print("Passwords do not match. Please try again.")
+    guideline()
+    common_usernames = load_common_credentials("username")
+    common_passwords = load_common_credentials("password") 
+    while True:
+        new_master_username = input("Enter your new master username: ")
+        if is_valid_username(new_master_username, common_usernames):
+            break
+        else:
+            print()
+    while True:
+        new_master_password = getpass.getpass("Enter your new master password: ")
+        if is_strong_password(new_master_password, common_passwords):
+            confirm_password = getpass.getpass("Confirm your new master password: ")
+            if new_master_password == confirm_password:
+                create_user(cursor, conn, new_master_username, new_master_password)
+                input("Account created successfully.\nPress Enter or type anything to continue...")
+                break
+            else:
+                print("Passwords do not match. Please try again.")
+        else:
+            print()
 
 def store_password(conn, cursor, login_username, login_password):
     site_name = input("Enter new account name or ID: ")
@@ -117,10 +128,7 @@ def store_password(conn, cursor, login_username, login_password):
         print(f"Generated Password: {password_to_store}")
     else:
         password_to_store = input("Enter the password to store: ")
-    start_time = time.time()
     store_encrypted_password(cursor, conn, login_username, site_name, password_to_store, login_password)
-    end_time = time.time()
-    print(f"Execution time: {end_time - start_time:.2f} seconds")
     print(f"Password for '{site_name}' stored successfully.")
 
 def retrieve_password(cursor, login_username, login_password):

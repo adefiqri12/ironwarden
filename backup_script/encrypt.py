@@ -3,20 +3,18 @@ from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import padding
-import bcrypt
 import os
 import time
+from argon2 import PasswordHasher
+
+ph = PasswordHasher()
 
 # Simulated storage for master credentials (username and hashed master password)
 user_database = {}
 
 # Function to create a new user (username and hashed master password)
 def create_user(username, master_password):
-    # Generate a salt for hashing the master password
-    salt = bcrypt.gensalt()
-    # Hash the master password with bcrypt
-    hashed_master_password = bcrypt.hashpw(master_password.encode(), salt)
-    # Store the username and hashed password in the simulated database
+    hashed_master_password = ph.hash(master_password)
     user_database[username] = hashed_master_password
     print("User created successfully!")
 
@@ -25,7 +23,7 @@ def authenticate_user(username, master_password):
     if username in user_database:
         stored_hashed_password = user_database[username]
         # Verify entered password against stored hashed password
-        if bcrypt.checkpw(master_password.encode(), stored_hashed_password):
+        if ph.verify(stored_hashed_password, master_password):
             print("Authentication successful!")
             return True
         else:
