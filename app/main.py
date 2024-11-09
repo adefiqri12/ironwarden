@@ -121,6 +121,7 @@ def store_password(conn, cursor, login_username, login_password):
     store_encrypted_password(cursor, conn, login_username, site_name, password_to_store, login_password)
     end_time = time.time()
     print(f"Execution time: {end_time - start_time:.2f} seconds")
+    print(f"Password for '{site_name}' stored successfully.")
 
 def retrieve_password(cursor, login_username, login_password):
     sites = get_stored_sites(cursor, login_username)

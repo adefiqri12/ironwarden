@@ -1,7 +1,7 @@
 import sqlite3
 import os
 
-def init_db(db_name='password_manager.db'):
+def init_db(db_name='db.sqlite3'):
     db_exists = os.path.exists(db_name)
     try:
         conn = sqlite3.connect(db_name)

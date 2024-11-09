@@ -121,7 +121,6 @@ def password_generator() -> Optional[str]:
 
         # Generate and display password
         password = generate_password(length=length, option=option)
-        print(f"\nGenerated password: {password}")
         return password
 
     except KeyboardInterrupt:

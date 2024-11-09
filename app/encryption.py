@@ -28,7 +28,6 @@ def store_encrypted_password(cursor, conn, username, site_name, password, master
     cursor.execute("INSERT INTO stored_passwords (username, site_name, salt, iv, encrypted_password) VALUES (?, ?, ?, ?, ?)",
                 (username, site_name, salt, iv, encrypted_password))
     conn.commit()
-    print(f"Password for '{site_name}' stored successfully!")
 
 # Decrypt a password retrieved from the database
 def retrieve_encrypted_password(cursor, username, site_name, master_password):
@@ -65,4 +64,3 @@ def update_encrypted_password(cursor, conn, username, site_name, new_password, m
     cursor.execute("UPDATE stored_passwords SET salt = ?, iv = ?, encrypted_password = ? WHERE username = ? AND site_name = ?",
                 (salt, iv, encrypted_password, username, site_name))
     conn.commit()
-    print(f"Password for '{site_name}' updated successfully!")

@@ -2,7 +2,7 @@ import sqlite3
 import os
 
 # Path to your SQLite database file
-db_path = 'password_manager.db'
+db_path = 'db.sqlite3'
 
 # Check if the database exists
 db_exists = os.path.exists(db_path)

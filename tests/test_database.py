@@ -11,7 +11,7 @@ sys.path.append(str(pathlib.Path(__file__).parent.parent))
 class TestDatabase(unittest.TestCase):
     def setUp(self):
         """Set up test fixtures before each test."""
-        self.test_db = 'test_password_manager.db'
+        self.test_db = 'test_db.sqlite3'
         # Ensure test database doesn't exist before each test
         if os.path.exists(self.test_db):
             os.remove(self.test_db)
