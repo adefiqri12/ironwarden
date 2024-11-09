@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import Mock, patch
 import sqlite3
 from argon2 import PasswordHasher
-from app.user import create_user, authenticate_user
+from app.master_account import init_master_account, auth_master_account
 import sys, pathlib
 
 # Add the parent directory to the Python path
@@ -17,9 +17,9 @@ class TestUser(unittest.TestCase):
         self.password = "testpass123"
         self.ph = PasswordHasher()
 
-    def test_create_user_success(self):
+    def test_init_master_account_success(self):
         """Test successful user creation."""
-        create_user(self.cursor, self.conn, self.username, self.password)
+        init_master_account(self.cursor, self.conn, self.username, self.password)
         
         # Verify database interactions
         self.cursor.execute.assert_called_once()
@@ -30,74 +30,74 @@ class TestUser(unittest.TestCase):
         stored_hash = call_args[1][1]
         self.assertTrue(self.ph.verify(stored_hash, self.password))
 
-    def test_create_user_duplicate(self):
+    def test_init_master_account_duplicate(self):
         """Test handling of duplicate username."""
         self.cursor.execute.side_effect = sqlite3.IntegrityError("UNIQUE constraint failed")
         
         with patch('builtins.print') as mock_print:
-            create_user(self.cursor, self.conn, self.username, self.password)
+            init_master_account(self.cursor, self.conn, self.username, self.password)
             mock_print.assert_called_with("master_username already exists.")
 
-    def test_create_user_none_values(self):
+    def test_init_master_account_none_values(self):
         """Test handling of None values."""
         with self.assertRaises(ValueError):
-            create_user(self.cursor, self.conn, None, self.password)
+            init_master_account(self.cursor, self.conn, None, self.password)
         
         with self.assertRaises(ValueError):
-            create_user(self.cursor, self.conn, self.username, None)
+            init_master_account(self.cursor, self.conn, self.username, None)
 
-    def test_create_user_database_error(self):
+    def test_init_master_account_database_error(self):
         """Test handling of database errors."""
         self.cursor.execute.side_effect = sqlite3.Error("Test database error")
         
         with patch('builtins.print') as mock_print:
-            create_user(self.cursor, self.conn, self.username, self.password)
+            init_master_account(self.cursor, self.conn, self.username, self.password)
             mock_print.assert_called_with("An error occurred: Test database error")
 
-    def test_authenticate_user_success(self):
+    def test_auth_master_account_success(self):
         """Test successful user authentication."""
         # Create hashed password
-        hashed_password = self.ph.hash(self.password)
-        self.cursor.fetchone.return_value = (hashed_password,)
+        master_password = self.ph.hash(self.password)
+        self.cursor.fetchone.return_value = (master_password,)
         
-        result = authenticate_user(self.cursor, self.username, self.password)
+        result = auth_master_account(self.cursor, self.username, self.password)
         
         self.assertTrue(result)
         self.cursor.execute.assert_called_once_with(
-            "SELECT hashed_password FROM users WHERE master_username = ?",
+            "SELECT master_password FROM master_accounts WHERE master_username = ?",
             (self.username,)
         )
 
-    def test_authenticate_user_wrong_password(self):
+    def test_auth_master_account_wrong_password(self):
         """Test authentication with wrong password."""
-        hashed_password = self.ph.hash(self.password)
-        self.cursor.fetchone.return_value = (hashed_password,)
+        master_password = self.ph.hash(self.password)
+        self.cursor.fetchone.return_value = (master_password,)
         
-        result = authenticate_user(self.cursor, self.username, "wrongpass")
+        result = auth_master_account(self.cursor, self.username, "wrongpass")
         
         self.assertFalse(result)
 
-    def test_authenticate_user_nonexistent(self):
+    def test_auth_master_account_nonexistent(self):
         """Test authentication with non-existent username."""
         self.cursor.fetchone.return_value = None
         
-        result = authenticate_user(self.cursor, self.username, self.password)
+        result = auth_master_account(self.cursor, self.username, self.password)
         
         self.assertFalse(result)
 
-    def test_authenticate_user_none_values(self):
+    def test_auth_master_account_none_values(self):
         """Test authentication with None values."""
         with self.assertRaises(AttributeError):
-            authenticate_user(self.cursor, None, self.password)
+            auth_master_account(self.cursor, None, self.password)
         
         with self.assertRaises(AttributeError):
-            authenticate_user(self.cursor, self.username, None)
+            auth_master_account(self.cursor, self.username, None)
 
-    def test_authenticate_user_database_error(self):
+    def test_auth_master_account_database_error(self):
         """Test handling of database errors during authentication."""
         self.cursor.execute.side_effect = sqlite3.Error("Test database error")
         
-        result = authenticate_user(self.cursor, self.username, self.password)
+        result = auth_master_account(self.cursor, self.username, self.password)
         
         self.assertFalse(result)
 

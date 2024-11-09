@@ -29,9 +29,9 @@ class TestPasswordManager(unittest.TestCase):
         
         # Create necessary tables with correct schema
         self.cursor.execute('''
-            CREATE TABLE IF NOT EXISTS users (
+            CREATE TABLE IF NOT EXISTS master_accounts (
                 master_username TEXT PRIMARY KEY,
-                hashed_password BLOB
+                master_password BLOB
             )
         ''')
         
@@ -43,7 +43,7 @@ class TestPasswordManager(unittest.TestCase):
                 salt BLOB,
                 iv BLOB,
                 encrypted_password BLOB,
-                FOREIGN KEY (username) REFERENCES users(master_username)
+                FOREIGN KEY (username) REFERENCES master_accounts(master_username)
             )
         ''')
         
@@ -53,8 +53,8 @@ class TestPasswordManager(unittest.TestCase):
         
         # Insert test user with mock hashed password
         self.cursor.execute(
-            "INSERT INTO users (master_username, hashed_password) VALUES (?, ?)",
-            (self.test_username, b"dummy_hashed_password")
+            "INSERT INTO master_accounts (master_username, master_password) VALUES (?, ?)",
+            (self.test_username, b"dummy_master_password")
         )
         self.conn.commit()
         
@@ -88,13 +88,13 @@ class TestPasswordManager(unittest.TestCase):
         mock_getpass.side_effect = ["newpass123", "newpass123"]
         
         # Mock password hashing
-        mock_hash.return_value = b"dummy_hashed_password"
+        mock_hash.return_value = b"dummy_master_password"
         
         # Test account creation
         create_new_account(self.conn, self.cursor)
         
         # Verify account was created
-        self.cursor.execute("SELECT master_username FROM users WHERE master_username = ?", 
+        self.cursor.execute("SELECT master_username FROM master_accounts WHERE master_username = ?", 
                         ("newuser",))
         result = self.cursor.fetchone()
         self.assertIsNotNone(result)

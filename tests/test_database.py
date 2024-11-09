@@ -34,14 +34,14 @@ class TestDatabase(unittest.TestCase):
             tables = cursor.fetchall()
             table_names = [table[0] for table in tables]
             
-            self.assertIn('users', table_names)
+            self.assertIn('master_accounts', table_names)
             self.assertIn('stored_passwords', table_names)
             
-            # Verify users table structure
-            cursor.execute("PRAGMA table_info(users)")
-            users_columns = {row[1]: row[2] for row in cursor.fetchall()}
-            self.assertEqual(users_columns['master_username'], 'TEXT')
-            self.assertEqual(users_columns['hashed_password'], 'BLOB')
+            # Verify master_accounts table structure
+            cursor.execute("PRAGMA table_info(master_accounts)")
+            master_accounts_columns = {row[1]: row[2] for row in cursor.fetchall()}
+            self.assertEqual(master_accounts_columns['master_username'], 'TEXT')
+            self.assertEqual(master_accounts_columns['master_password'], 'BLOB')
             
             # Verify stored_passwords table structure
             cursor.execute("PRAGMA table_info(stored_passwords)")

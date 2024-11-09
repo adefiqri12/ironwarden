@@ -8,7 +8,7 @@ import sqlite3
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from app.database import init_db
-from app.user import create_user, authenticate_user
+from app.master_account import init_master_account, auth_master_account
 from app.encryption import store_encrypted_password, update_encrypted_password, retrieve_encrypted_password
 from app.guideline import print_ascii_welcome, guideline, is_valid_username, is_strong_password, load_common_credentials
 from generator.password_generator import password_generator
@@ -76,7 +76,7 @@ def handle_login(conn, cursor, master_username, master_password):
         return
     master_password = getpass.getpass("Enter your master password: ")
 
-    if authenticate_user(cursor, master_username, master_password):
+    if auth_master_account(cursor, master_username, master_password):
         print(f"\nWelcome, {master_username}!")
         handle_password_operations(conn, cursor, master_username, master_password)
 
@@ -110,7 +110,7 @@ def create_new_master_account(conn, cursor):
         new_master_username = input("Enter your new master username: ")
         if is_valid_username(new_master_username, common_usernames):
             # Attempt to create the user immediately to check for duplicates
-            if create_user(cursor, conn, new_master_username, check_only=True):
+            if init_master_account(cursor, conn, new_master_username, check_only=True):
                 print("Username is available.")
                 break  # Username is valid and unique
             else:
@@ -123,7 +123,7 @@ def create_new_master_account(conn, cursor):
             confirm_password = getpass.getpass("Confirm your new master password: ")
             if new_master_password == confirm_password:
                 # Finalize account creation with the validated password
-                create_user(cursor, conn, new_master_username, new_master_password)
+                init_master_account(cursor, conn, new_master_username, new_master_password)
                 input("Account created successfully.")
                 break
             else:
@@ -138,7 +138,7 @@ def delete_master_account(conn, cursor):
         input("Error: Username does not exist.")
         return
     master_password = getpass.getpass("Enter the password for this account to confirm deletion: ")
-    if not authenticate_user(cursor, master_username, master_password):
+    if not auth_master_account(cursor, master_username, master_password):
         return
     confirmation = input(f"Are you sure you want to delete the account '{master_username}'? This action is irreversible (yes/no): ")
     if confirmation.lower() == 'yes':
@@ -149,7 +149,7 @@ def delete_master_account(conn, cursor):
 
 def db_delete_master_account(conn, cursor, master_username):
     try:
-        cursor.execute("DELETE FROM users WHERE master_username = ?", (master_username,))
+        cursor.execute("DELETE FROM master_accounts WHERE master_username = ?", (master_username,))
         conn.commit()
         return True
     except sqlite3.Error as e:
@@ -243,7 +243,7 @@ def get_stored_sites(cursor, master_username):
 
 def find_master_account(cursor, master_username):
     """Check if a user exists in the database."""
-    cursor.execute("SELECT * FROM users WHERE master_username = ?", (master_username,))
+    cursor.execute("SELECT * FROM master_accounts WHERE master_username = ?", (master_username,))
     return cursor.fetchone()
 
 if __name__ == "__main__":

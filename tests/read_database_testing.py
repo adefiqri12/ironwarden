@@ -9,14 +9,15 @@ db_exists = os.path.exists(db_path)
 
 # Connect to the SQLite database (it will create it if it doesn't exist)
 conn = sqlite3.connect(db_path)
+conn.execute("PRAGMA foreign_keys = ON")
 cursor = conn.cursor()
 
 # Create the tables if they don't already exist
 if not db_exists:
     cursor.execute('''
-    CREATE TABLE IF NOT EXISTS users (
+    CREATE TABLE IF NOT EXISTS master_accounts (
         master_username TEXT PRIMARY KEY,
-        hashed_password BLOB
+        master_password BLOB
     )
     ''')
     cursor.execute('''
@@ -27,7 +28,7 @@ if not db_exists:
         salt BLOB,
         iv BLOB,
         encrypted_password BLOB,
-        FOREIGN KEY (username) REFERENCES users(master_username)
+        FOREIGN KEY (username) REFERENCES master_accounts(master_username)
     )
     ''')
     conn.commit()  # Commit changes if tables were created
@@ -40,8 +41,8 @@ def fetch_all(table_name):
     for row in rows:
         print(row)
 
-# Query and print data from the 'users' table
-fetch_all('users')
+# Query and print data from the 'master_accounts' table
+fetch_all('master_accounts')
 
 # Query and print data from the 'stored_passwords' table
 fetch_all('stored_passwords')

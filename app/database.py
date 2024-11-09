@@ -9,9 +9,9 @@ def init_db(db_name='db.sqlite3'):
         cursor = conn.cursor()
         if not db_exists:
             cursor.execute('''
-            CREATE TABLE IF NOT EXISTS users (
+            CREATE TABLE IF NOT EXISTS master_accounts (
                 master_username TEXT PRIMARY KEY,
-                hashed_password BLOB
+                master_password BLOB
             )
             ''')
             cursor.execute('''
@@ -22,7 +22,7 @@ def init_db(db_name='db.sqlite3'):
                 salt BLOB,
                 iv BLOB,
                 encrypted_password BLOB,
-                FOREIGN KEY (username) REFERENCES users(master_username)
+                FOREIGN KEY (username) REFERENCES master_accounts(master_username)
             )
             ''')
             conn.commit()
