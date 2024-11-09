@@ -25,13 +25,13 @@ def store_encrypted_password(cursor, conn, username, site_name, password, master
     padder = padding.PKCS7(128).padder()
     padded_data = padder.update(password.encode()) + padder.finalize()
     encrypted_password = encryptor.update(padded_data) + encryptor.finalize()
-    cursor.execute("INSERT INTO stored_passwords (username, site_name, salt, iv, encrypted_password) VALUES (?, ?, ?, ?, ?)",
+    cursor.execute("INSERT INTO data_vault (username, site_name, salt, iv, encrypted_password) VALUES (?, ?, ?, ?, ?)",
                 (username, site_name, salt, iv, encrypted_password))
     conn.commit()
 
 # Decrypt a password retrieved from the database
 def retrieve_encrypted_password(cursor, username, site_name, master_password):
-    cursor.execute("SELECT salt, iv, encrypted_password FROM stored_passwords WHERE username = ? AND site_name = ?", 
+    cursor.execute("SELECT salt, iv, encrypted_password FROM data_vault WHERE username = ? AND site_name = ?", 
                 (username, site_name))
     result = cursor.fetchone()
     if result:
@@ -61,6 +61,6 @@ def update_encrypted_password(cursor, conn, username, site_name, new_password, m
     padder = padding.PKCS7(128).padder()
     padded_data = padder.update(new_password.encode()) + padder.finalize()
     encrypted_password = encryptor.update(padded_data) + encryptor.finalize()
-    cursor.execute("UPDATE stored_passwords SET salt = ?, iv = ?, encrypted_password = ? WHERE username = ? AND site_name = ?",
+    cursor.execute("UPDATE data_vault SET salt = ?, iv = ?, encrypted_password = ? WHERE username = ? AND site_name = ?",
                 (salt, iv, encrypted_password, username, site_name))
     conn.commit()

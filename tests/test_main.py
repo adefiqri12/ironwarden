@@ -36,7 +36,7 @@ class TestPasswordManager(unittest.TestCase):
         ''')
         
         self.cursor.execute('''
-            CREATE TABLE IF NOT EXISTS stored_passwords (
+            CREATE TABLE IF NOT EXISTS data_vault (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 username TEXT,
                 site_name TEXT,
@@ -130,7 +130,7 @@ class TestPasswordManager(unittest.TestCase):
         test_sites = [("site1",), ("site2",), ("site3",)]
         for site in test_sites:
             self.cursor.execute(
-                """INSERT INTO stored_passwords 
+                """INSERT INTO data_vault 
                 (username, site_name, salt, iv, encrypted_password) 
                 VALUES (?, ?, ?, ?, ?)""",
                 (self.test_username, site[0], b"dummy_salt", b"dummy_iv", b"dummy_encrypted_password")
@@ -155,7 +155,7 @@ class TestPasswordManager(unittest.TestCase):
         
         # Insert test site
         self.cursor.execute(
-            """INSERT INTO stored_passwords 
+            """INSERT INTO data_vault 
             (username, site_name, salt, iv, encrypted_password) 
             VALUES (?, ?, ?, ?, ?)""",
             (self.test_username, test_site, b"dummy_salt", b"dummy_iv", b"dummy_encrypted_password")
@@ -174,7 +174,7 @@ class TestPasswordManager(unittest.TestCase):
         # Insert test data
         test_site = "testsite"
         self.cursor.execute(
-            """INSERT INTO stored_passwords 
+            """INSERT INTO data_vault 
             (username, site_name, salt, iv, encrypted_password) 
             VALUES (?, ?, ?, ?, ?)""",
             (self.test_username, test_site, b"dummy_salt", b"dummy_iv", b"dummy_encrypted_password")
@@ -187,7 +187,7 @@ class TestPasswordManager(unittest.TestCase):
         
         # Verify password was deleted
         self.cursor.execute(
-            "SELECT * FROM stored_passwords WHERE username = ? AND site_name = ?",
+            "SELECT * FROM data_vault WHERE username = ? AND site_name = ?",
             (self.test_username, test_site)
         )
         result = self.cursor.fetchone()
@@ -202,7 +202,7 @@ class TestPasswordManager(unittest.TestCase):
         
         # Insert test site
         self.cursor.execute(
-            """INSERT INTO stored_passwords 
+            """INSERT INTO data_vault 
             (username, site_name, salt, iv, encrypted_password) 
             VALUES (?, ?, ?, ?, ?)""",
             (self.test_username, test_site, b"dummy_salt", b"dummy_iv", b"dummy_encrypted_password")

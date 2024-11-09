@@ -15,7 +15,7 @@ def init_db(db_name='db.sqlite3'):
             )
             ''')
             cursor.execute('''
-            CREATE TABLE IF NOT EXISTS stored_passwords (
+            CREATE TABLE IF NOT EXISTS data_vault (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 username TEXT,
                 site_name TEXT,

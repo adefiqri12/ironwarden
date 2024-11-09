@@ -59,7 +59,7 @@ class TestEncryption(unittest.TestCase):
         query = call_args[0]
         params = call_args[1]
         
-        self.assertIn("INSERT INTO stored_passwords", query)
+        self.assertIn("INSERT INTO data_vault", query)
         self.assertEqual(params[0], self.username)
         self.assertEqual(params[1], self.site_name)
         self.assertEqual(len(params[2]), 16)  # salt length
@@ -98,7 +98,7 @@ class TestEncryption(unittest.TestCase):
         
         # Verify database query
         self.cursor.execute.assert_called_once_with(
-            "SELECT salt, iv, encrypted_password FROM stored_passwords WHERE username = ? AND site_name = ?",
+            "SELECT salt, iv, encrypted_password FROM data_vault WHERE username = ? AND site_name = ?",
             (self.username, self.site_name)
         )
 

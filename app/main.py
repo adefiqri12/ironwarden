@@ -191,7 +191,7 @@ def delete_password(conn, cursor, master_username):
         choice = get_user_choice(len(sites))
         if choice is not None:
             selected_site = sites[choice][0]
-            cursor.execute("DELETE FROM stored_passwords WHERE username = ? AND site_name = ?", 
+            cursor.execute("DELETE FROM data_vault WHERE username = ? AND site_name = ?", 
                         (master_username, selected_site))
             conn.commit()
             print(f"Account '{selected_site}' has been deleted successfully.")
@@ -238,7 +238,7 @@ def get_user_choice(site_count):
 
 # Helper function to get stored sites
 def get_stored_sites(cursor, master_username):
-    cursor.execute("SELECT site_name FROM stored_passwords WHERE username = ?", (master_username,))
+    cursor.execute("SELECT site_name FROM data_vault WHERE username = ?", (master_username,))
     return cursor.fetchall()
 
 def find_master_account(cursor, master_username):

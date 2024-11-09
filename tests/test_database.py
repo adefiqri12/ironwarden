@@ -35,7 +35,7 @@ class TestDatabase(unittest.TestCase):
             table_names = [table[0] for table in tables]
             
             self.assertIn('master_accounts', table_names)
-            self.assertIn('stored_passwords', table_names)
+            self.assertIn('data_vault', table_names)
             
             # Verify master_accounts table structure
             cursor.execute("PRAGMA table_info(master_accounts)")
@@ -43,8 +43,8 @@ class TestDatabase(unittest.TestCase):
             self.assertEqual(master_accounts_columns['master_username'], 'TEXT')
             self.assertEqual(master_accounts_columns['master_password'], 'BLOB')
             
-            # Verify stored_passwords table structure
-            cursor.execute("PRAGMA table_info(stored_passwords)")
+            # Verify data_vault table structure
+            cursor.execute("PRAGMA table_info(data_vault)")
             passwords_columns = {row[1]: row[2] for row in cursor.fetchall()}
             self.assertEqual(passwords_columns['id'], 'INTEGER')
             self.assertEqual(passwords_columns['username'], 'TEXT')
@@ -104,7 +104,7 @@ def test_database_foreign_key_constraint(self):
         # Try to insert a password record with non-existent username
         with self.assertRaises(sqlite3.IntegrityError):
             cursor.execute("""
-                INSERT INTO stored_passwords (username, site_name, salt, iv, encrypted_password)
+                INSERT INTO data_vault (username, site_name, salt, iv, encrypted_password)
                 VALUES (?, ?, ?, ?, ?)
             """, ('nonexistent_user', 'test.com', b'salt', b'iv', b'encrypted'))
             conn.commit()

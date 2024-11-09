@@ -21,7 +21,7 @@ if not db_exists:
     )
     ''')
     cursor.execute('''
-    CREATE TABLE IF NOT EXISTS stored_passwords (
+    CREATE TABLE IF NOT EXISTS data_vault (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         username TEXT,
         site_name TEXT,
@@ -44,8 +44,8 @@ def fetch_all(table_name):
 # Query and print data from the 'master_accounts' table
 fetch_all('master_accounts')
 
-# Query and print data from the 'stored_passwords' table
-fetch_all('stored_passwords')
+# Query and print data from the 'data_vault' table
+fetch_all('data_vault')
 
 # Close the connection
 conn.close()
