@@ -47,5 +47,3 @@ def generate_seed_phrase(wordlist_path='./dictionary/bip39.txt'):
     except Exception as e:
         print(f"An error occurred: {e}")
         return None
-
-generate_seed_phrase()

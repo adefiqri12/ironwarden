@@ -9,23 +9,22 @@ For authentication, the entered password is verified against the stored hash. In
 
 For a detailed explanation, refer to [how_it_works.txt](how_it_works.txt).
 
-## Current Build  
-**Version**: v0.1.1 
-
-## Table of Contents
-
-- [Features](#features)
-- [Installation](#installation)
-- [Complete Features](#completed-features)
-- [Planned Features](#planned-features)
-- [Disclaimer](#disclaimer)
-
-## Features
+### Features
 
 - **Login Setup**: Create a new account and log in to access the program.
 - **SQLite Database**: Securely stores user data within a SQLite database.
 - **Master Password**: Set a master password to protect all stored data.
 - **Password Management**: Includes full CRUD (Create, Read, Update, Delete) operations for storing and managing passwords for various sites or IDs.
+
+### Current Build  
+**Version**: v0.1.1 
+
+## Table of Contents
+
+- [Installation](#installation)
+- [Complete Features](#completed-features)
+- [Planned Features](#planned-features)
+- [Disclaimer](#disclaimer)
 
 ## Installation
 
