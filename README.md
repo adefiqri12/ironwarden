@@ -89,16 +89,6 @@ To run as a standalone executable on Windows:
     - Mixed case with numbers
     - Mixed case with numbers and special characters
 
-### Todolist
-
-- [ ] Edit master password with a 12-word seed phrase.
-- [ ] Lock access after 10 failed login attempts, with an option to recover using a 12-word seed phrase.
-- [ ] Enable cloud backup for database storage.
-- [ ] Add randomly generated, readable usernames with an expanded English dictionary.
-- [ ] Add support for text-based data storage (e.g., notes).
-- [ ] Implement a search feature for stored accounts.
-- [ ] Enable OTP-based 2FA (using `pyotp`) for enhanced security.
-
 ## Planned Features
 
 - **Cloud Backup**: Secure database backups to the cloud.
@@ -120,6 +110,16 @@ To run as a standalone executable on Windows:
 
 - **AI-Biometric Security**  
    Integrate AI-powered biometric authentication methods (e.g. facial recognition, fingerprint recognition) to provide an additional layer of security for accessing the password manager.
+
+### Todolist
+
+- [ ] Edit master password with a 12-word seed phrase.
+- [ ] Lock access after 10 failed login attempts, with an option to recover using a 12-word seed phrase.
+- [ ] Enable cloud backup for database storage.
+- [ ] Add randomly generated, readable usernames with an expanded English dictionary.
+- [ ] Add support for text-based data storage (e.g., notes).
+- [ ] Implement a search feature for stored accounts.
+- [ ] Enable OTP-based 2FA (using `pyotp`) for enhanced security.
 
 ## Disclaimer
 
