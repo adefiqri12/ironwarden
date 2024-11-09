@@ -1,8 +1,7 @@
 <img src="./ironwarden.png" alt="Ironwarden icon" width="100" height="100">
 
 # IRONWARDEN
-[![GitHub release](https://img.shields.io/badge/release-3.0.1-yellow.svg)](https://github.com/adefiqri12/ironwarden/releases/latest)
-**Version**: v0.1.1 
+[![GitHub release](https://img.shields.io/badge/release-0.1.1-yellow.svg)](https://github.com/adefiqri12/ironwarden/releases/latest)
 
 **IRONWARDEN** is a simple CLI-based password manager designed for secure storage and management of passwords on a local desktop. IRONWARDEN securely stores and manages passwords using a combination of Argon2 hashing, AES encryption, and a SQLite database.
 
@@ -13,6 +12,7 @@ For authentication, the entered password is verified against the stored hash. In
 For a detailed explanation, refer to [how_it_works.txt](how_it_works.txt).
 
 ### Features
+**Version**: v0.1.1 
 
 - **Login Setup**: Create a new account and log in to access the program.
 - **SQLite Database**: Securely stores user data within a SQLite database.
