@@ -11,13 +11,13 @@ from app.database import init_db
 from app.user import create_user, authenticate_user
 from app.encryption import store_encrypted_password, update_encrypted_password, retrieve_encrypted_password
 from app.ascii import print_ascii_welcome
+from generator.password_generator import password_generator
 
 def clear_screen():
     os.system('cls' if os.name == 'nt' else 'clear')
 
 def secure_clear(data):
     """Securely clear data from memory."""
-
     if data is None or data == "":
         return None
     if isinstance(data, bytearray):
@@ -66,7 +66,6 @@ def main():
         else:
             print("Invalid choice. Please choose again.")
 
-# Function to handle login and password operations
 def handle_login(conn, cursor, login_username, login_password):
     login_username = input("Enter your username: ")
     login_password = getpass.getpass("Enter your master password: ")
@@ -77,7 +76,6 @@ def handle_login(conn, cursor, login_username, login_password):
     else:
         print("Login failed. Please try again.")
 
-# Function to handle password operations for an authenticated user
 def handle_password_operations(conn, cursor, login_username, login_password):
     while True:
         print("\nOptions:")
@@ -100,7 +98,6 @@ def handle_password_operations(conn, cursor, login_username, login_password):
         else:
             print("Invalid option. Please choose again.")
 
-# Function to create a new account
 def create_new_account(conn, cursor):
     new_master_username = input("Enter your new master username: ")
     new_master_password = getpass.getpass("Enter your new master password: ")
@@ -111,16 +108,20 @@ def create_new_account(conn, cursor):
     else:
         print("Passwords do not match. Please try again.")
 
-# Function to store a new password
 def store_password(conn, cursor, login_username, login_password):
     site_name = input("Enter new account name or ID: ")
-    password_to_store = input("Enter the password to store: ")
+    use_generated_password = input("Do you want to generate a password? (y/n): ").strip().lower()
+
+    if use_generated_password == 'y':
+        password_to_store = password_generator()
+        print(f"Generated Password: {password_to_store}")
+    else:
+        password_to_store = input("Enter the password to store: ")
     start_time = time.time()
     store_encrypted_password(cursor, conn, login_username, site_name, password_to_store, login_password)
     end_time = time.time()
     print(f"Execution time: {end_time - start_time:.2f} seconds")
 
-# Function to retrieve a password
 def retrieve_password(cursor, login_username, login_password):
     sites = get_stored_sites(cursor, login_username)
     if sites:
@@ -137,7 +138,6 @@ def retrieve_password(cursor, login_username, login_password):
     else:
         print("No stored passwords found.")
 
-# Function to delete a password
 def delete_password(conn, cursor, login_username):
     sites = get_stored_sites(cursor, login_username)
     if sites:
@@ -152,7 +152,6 @@ def delete_password(conn, cursor, login_username):
     else:
         print("No stored passwords to delete.")
 
-# Function to update a stored password
 def update_password(conn, cursor, login_username, login_password):
     sites = get_stored_sites(cursor, login_username)
     if sites:
@@ -160,7 +159,12 @@ def update_password(conn, cursor, login_username, login_password):
         choice = get_user_choice(len(sites))
         if choice is not None:
             selected_site = sites[choice][0]
-            new_password = input(f"Enter the new password for '{selected_site}': ")
+            use_generated_password = input("Do you want to generate a password? (y/n): ").strip().lower()
+            if use_generated_password == 'y':
+                new_password = password_generator()
+                print(f"Generated Password for'{selected_site}': {new_password}")
+            else:
+                new_password = input(f"Enter the new password for '{selected_site}': ")
             update_encrypted_password(cursor, conn, login_username, selected_site, new_password, login_password)
             print(f"Password for '{selected_site}' has been updated successfully.")
     else:

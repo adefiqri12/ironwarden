@@ -21,7 +21,6 @@ For a detailed explanation, refer to [how_it_works.txt](how_it_works.txt).
 - [Future Implementations](#future-implementations)
 - [Disclaimer](#disclaimer)
 
-
 ## Features
 
 - **Login Setup**: Create a new account and log in to access the program.
@@ -48,7 +47,6 @@ For a detailed explanation, refer to [how_it_works.txt](how_it_works.txt).
    ```bash
    python app/main.py
    ```
-
 
 ### Creating an Executable (.exe) for Windows
 
@@ -79,24 +77,16 @@ To run as a standalone executable on Windows:
 5. **Locate Executable**  
    The generated executable will be in the `dist/` folder.
 
-
 ## Todo List
 
 - [ ] Edit master password with a 12-word seed phrase.
 - [ ] Create a one-click app to avoid terminal use.
 - [ ] Enable cloud backup for database storage.
-- [x] Add randomly generated, readable usernames with an expanded English dictionary.
-- [ ] Implement automatic password generation with customizable options:
-    - Only numbers (for PINs)
-    - Lowercase only
-    - Mixed case
-    - Mixed case with numbers
-    - Mixed case with numbers and special characters
+- [ ] Add randomly generated, readable usernames with an expanded English dictionary.
 - [ ] Add support for text-based data storage (e.g., notes).
 - [ ] Implement a search feature for stored accounts.
 - [ ] Lock access after 10 failed login attempts, with an option to recover using a 12-word seed phrase.
 - [ ] Enable OTP-based 2FA (using `pyotp`) for enhanced security.
-
 
 ## Completed Features
 
@@ -105,7 +95,12 @@ To run as a standalone executable on Windows:
 - [x] Added edit and delete options for stored passwords.
 - [x] Passwords are hidden and directly pasted to reduce exposure.
 - [x] Memory cleaning for secure password handling using `ctypes`.
-
+- [x] Automatic password generation with custom length and customizable options:
+    - Only numbers (for PINs)
+    - Lowercase only
+    - Mixed case
+    - Mixed case with numbers
+    - Mixed case with numbers and special characters
 
 ## Planned Features
 
@@ -114,7 +109,6 @@ To run as a standalone executable on Windows:
 - **Automatic Password Creation**: Generate passwords based on predefined criteria.
 - **Text-Based Data Storage**: Save notes and account-related information.
 - **Search Functionality**: Quick search for stored accounts.
-
 
 ## Future Implementations
 
@@ -126,7 +120,6 @@ To run as a standalone executable on Windows:
 
 - **Enhanced Password Security with Pepper**  
    Incorporate a "pepper," an extra secret value stored outside the database, into the password hashing process. This additional security layer further protects against brute-force attacks in case of database breaches.
-
 
 ## Disclaimer
 
