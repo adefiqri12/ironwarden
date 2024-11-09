@@ -80,12 +80,11 @@ To run as a standalone executable on Windows:
 ## Todo List
 
 - [ ] Edit master password with a 12-word seed phrase.
-- [ ] Create a one-click app to avoid terminal use.
+- [ ] Lock access after 10 failed login attempts, with an option to recover using a 12-word seed phrase.
 - [ ] Enable cloud backup for database storage.
 - [ ] Add randomly generated, readable usernames with an expanded English dictionary.
 - [ ] Add support for text-based data storage (e.g., notes).
 - [ ] Implement a search feature for stored accounts.
-- [ ] Lock access after 10 failed login attempts, with an option to recover using a 12-word seed phrase.
 - [ ] Enable OTP-based 2FA (using `pyotp`) for enhanced security.
 
 ## Complete Features
@@ -121,6 +120,9 @@ To run as a standalone executable on Windows:
 - **Enhanced Password Security with Pepper**  
    Incorporate a "pepper," an extra secret value stored outside the database, into the password hashing process. This additional security layer further protects against brute-force attacks in case of database breaches.
 
+- **AI-Biometric Security**  
+   Integrate AI-powered biometric authentication methods (e.g. facial recognition, fingerprint recognition) to provide an additional layer of security for accessing the password manager.
+
 ## Disclaimer
 
 ### USE AT YOUR OWN RISK
@@ -134,5 +136,11 @@ You are responsible for ensuring the security and integrity of your data. The au
 It is your responsibility to regularly back up your data to prevent loss in case of software failure or other unforeseen circumstances.
 
 By using this program, you acknowledge that you have read and understood this warning and disclaimer.
+
+### TROUBLESHOOTING
+
+IRONWARDEN is actively in development. If you find a bug, have a question or want to request a new feature, please [open an issue](https://github.com/adefiqri12/ironwarden/issues) and we will address it as soon as possible. 
+
+You can also propose changes via a Pull Request: fork the repository, make your changes, and send us a Pull Request. We'll review it shortly. 
 
 ---
