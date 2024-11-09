@@ -28,7 +28,6 @@ For a detailed explanation, refer to [how_it_works.txt](how_it_works.txt).
 - **Master Password**: Set a master password to protect all stored data.
 - **Password Management**: Includes full CRUD (Create, Read, Update, Delete) operations for storing and managing passwords for various sites or IDs.
 
-
 ## Installation
 
 ### Running Directly in the Terminal
@@ -88,7 +87,7 @@ To run as a standalone executable on Windows:
 - [ ] Lock access after 10 failed login attempts, with an option to recover using a 12-word seed phrase.
 - [ ] Enable OTP-based 2FA (using `pyotp`) for enhanced security.
 
-## Completed Features
+## Complete Features
 
 - [x] Login setup with account creation.
 - [x] Integrated SQLite database for data storage.
