@@ -10,7 +10,7 @@ For authentication, the entered password is verified against the stored hash. In
 For a detailed explanation, refer to [how_it_works.txt](how_it_works.txt).
 
 ## Current Build  
-**Version**: v0.1.2
+**Version**: v0.1.1 
 
 ## Table of Contents
 
@@ -29,51 +29,53 @@ For a detailed explanation, refer to [how_it_works.txt](how_it_works.txt).
 
 ## Installation
 
-### Running Directly in the Terminal
+### Option 1: Running the `.exe` File (Recommended for Windows Users)
 
-1. **Install Python 3.10+**  
-   Ensure Python 3.10 or later is installed. [Download Python](https://www.python.org/downloads/).
+If you're on Windows, you can use the pre-built `.exe` file to quickly set up and run the application without needing Python installed.
 
-2. **Install Dependencies**  
-   Clone or download the repository, then navigate to the project directory and install dependencies with:
+1. **Download the `.exe` File**  
+   Go to the [latest release](https://github.com/adefiqri12/ironwarden/releases/latest) and download the `ironwarden.exe` file.
+
+2. **Run the Application**  
+   Simply double-click the `ironwarden.exe` file to launch the application.  
+   > **Note**: This will open the application in a command-line interface (CLI) window.
+
+### Option 2: Running Directly from Source Code (Requires Python)
+
+If you want to run the application from the source code or are not on Windows, follow the steps below.
+
+1. **Download or Clone the Repository**  
+   Download the `.zip` file from the [latest release](https://github.com/adefiqri12/ironwarden/releases/latest), or clone the repository directly with:
    ```bash
+   git clone https://github.com/adefiqri12/ironwarden.git
+   ```
+   Extract or navigate to the project directory.
+
+2. **Verify and Install Python 3.10+**  
+   Ensure Python 3.10 or later is installed. Check your version with:
+   ```bash
+   python3 --version  # or `python --version` depending on your system
+   ```
+   If needed, download the latest version of Python [here](https://www.python.org/downloads/).
+
+3. **Install Dependencies**  
+   Navigate to the project directory and install dependencies with:
+   ```bash
+   cd ironwarden
    pip install -r requirements.txt
    ```
 
-3. **Run the Application**  
-   To launch the password manager, run the command :
+4. **Run the Application**  
+   Make sure you’re in the `./ironwarden` directory before running the application. You can check your current directory by running:
+   ```bash
+   pwd  # prints the current directory path
+   ```
+   Once confirmed, launch the password manager by executing:
    ```bash
    python app/main.py
    ```
 
-### Creating an Executable (.exe) for Windows
-
-To run as a standalone executable on Windows:
-
-1. **Install Dependencies**  
-   Install Python 3.10+ and then PyInstaller:
-   ```bash
-   pip install pyinstaller
-   ```
-
-2. **Add Scripts to PATH**  
-   Add `C:\Users\<YourUsername>\AppData\Roaming\Python\Python310\Scripts` to your system’s `PATH` if not already done.
-
-3. **Verify Installations**  
-   Confirm Python and PyInstaller installation:
-   ```bash
-   python --version
-   pip show pyinstaller
-   ```
-
-4. **Create Executable**  
-   In the project directory, run:
-   ```bash
-   pyinstaller --onefile --name Ironwarden --icon=icon.ico app/main.py
-   ```
-
-5. **Locate Executable**  
-   The generated executable will be in the `dist` folder.
+> **Note:** Running `python app/main.py` will only work if you’re in the `./ironwarden` directory, where `app/main.py` is located.
 
 ## Complete Features
 
