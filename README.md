@@ -1,5 +1,5 @@
+![Project Icon](./icon.png)
 # IRONWARDEN
-
 **IRONWARDEN** is a simple CLI-based password manager designed for secure storage and management of passwords on a local desktop. IRONWARDEN securely stores and manages passwords using a combination of Argon2 hashing, AES encryption, and a SQLite database.
 
 When a user creates an account, their master password is hashed with Argon2 and stored in the database. Argon2 is designed to resist brute-force attacks by being memory-intensive, making it computationally expensive to crack.
@@ -9,7 +9,7 @@ For authentication, the entered password is verified against the stored hash. In
 For a detailed explanation, refer to [how_it_works.txt](how_it_works.txt).
 
 ## Current Build
-**Version**: v0.1
+**Version**: v0.1.2
 
 ## Table of Contents
 
