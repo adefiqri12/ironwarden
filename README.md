@@ -16,10 +16,8 @@ For a detailed explanation, refer to [how_it_works.txt](how_it_works.txt).
 
 - [Features](#features)
 - [Installation](#installation)
-- [Todo List](#todo-list)
-- [Completed Features](#completed-features)
+- [Complete Features](#completed-features)
 - [Planned Features](#planned-features)
-- [Future Implementations](#future-implementations)
 - [Disclaimer](#disclaimer)
 
 ## Features
@@ -77,16 +75,6 @@ To run as a standalone executable on Windows:
 5. **Locate Executable**  
    The generated executable will be in the `dist` folder.
 
-## Todo List
-
-- [ ] Edit master password with a 12-word seed phrase.
-- [ ] Lock access after 10 failed login attempts, with an option to recover using a 12-word seed phrase.
-- [ ] Enable cloud backup for database storage.
-- [ ] Add randomly generated, readable usernames with an expanded English dictionary.
-- [ ] Add support for text-based data storage (e.g., notes).
-- [ ] Implement a search feature for stored accounts.
-- [ ] Enable OTP-based 2FA (using `pyotp`) for enhanced security.
-
 ## Complete Features
 
 - [x] Login setup with account creation.
@@ -101,6 +89,16 @@ To run as a standalone executable on Windows:
     - Mixed case with numbers
     - Mixed case with numbers and special characters
 
+### Todolist
+
+- [ ] Edit master password with a 12-word seed phrase.
+- [ ] Lock access after 10 failed login attempts, with an option to recover using a 12-word seed phrase.
+- [ ] Enable cloud backup for database storage.
+- [ ] Add randomly generated, readable usernames with an expanded English dictionary.
+- [ ] Add support for text-based data storage (e.g., notes).
+- [ ] Implement a search feature for stored accounts.
+- [ ] Enable OTP-based 2FA (using `pyotp`) for enhanced security.
+
 ## Planned Features
 
 - **Cloud Backup**: Secure database backups to the cloud.
@@ -109,7 +107,7 @@ To run as a standalone executable on Windows:
 - **Text-Based Data Storage**: Save notes and account-related information.
 - **Search Functionality**: Quick search for stored accounts.
 
-## Future Implementations
+### Future Implementations
 
 - **Device-Specific Salt**  
    Store a unique, device-specific salt locally. This device-bound salt, combined with the master password, ensures that encrypted passwords remain secure and accessible only from authorized devices.
