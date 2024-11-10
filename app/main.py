@@ -169,12 +169,12 @@ def store_password(conn, cursor, master_username, master_password):
     print(f"Password for '{site_name}' stored successfully.")
 
 def retrieve_password(cursor, master_username, master_password):
-    sites = get_stored_sites(cursor, master_username)
-    if sites:
-        display_sites(sites)
-        choice = get_user_choice(len(sites))
+    username = retrieve_stored_username(cursor, master_username)
+    if username:
+        retrieve_stored_username(username)
+        choice = get_user_choice(len(username))
         if choice is not None:
-            selected_site = sites[choice][0]
+            selected_site = username[choice][0]
             retrieved_password = retrieve_encrypted_password(cursor, master_username, selected_site, master_password)
             if retrieved_password:
                 pyperclip.copy(retrieved_password)
@@ -185,12 +185,12 @@ def retrieve_password(cursor, master_username, master_password):
         print("Error: No stored passwords found.")
 
 def delete_password(conn, cursor, master_username):
-    sites = get_stored_sites(cursor, master_username)
-    if sites:
-        display_sites(sites)
-        choice = get_user_choice(len(sites))
+    username = retrieve_stored_username(cursor, master_username)
+    if username:
+        retrieve_stored_username(username)
+        choice = get_user_choice(len(username))
         if choice is not None:
-            selected_site = sites[choice][0]
+            selected_site = username[choice][0]
             cursor.execute("DELETE FROM data_vault WHERE username = ? AND site_name = ?", 
                         (master_username, selected_site))
             conn.commit()
@@ -199,12 +199,12 @@ def delete_password(conn, cursor, master_username):
         print("Error: No stored passwords to delete.")
 
 def update_password(conn, cursor, master_username, master_password):
-    sites = get_stored_sites(cursor, master_username)
-    if sites:
-        display_sites(sites)
-        choice = get_user_choice(len(sites))
+    username = retrieve_stored_username(cursor, master_username)
+    if username:
+        retrieve_stored_username(username)
+        choice = get_user_choice(len(username))
         if choice is not None:
-            selected_site = sites[choice][0]
+            selected_site = username[choice][0]
             use_generated_password = input("Do you want to generate a password? (y/n): ").strip().lower()
             if use_generated_password == 'y':
                 new_password = password_generator()
@@ -217,13 +217,13 @@ def update_password(conn, cursor, master_username, master_password):
     else:
         print("Error: No stored passwords found.")
 
-# Helper function to display stored sites
-def display_sites(sites):
+# Helper function to display stored username
+def retrieve_stored_username(username):
     print("\nStored Account/ID:")
-    for idx, site in enumerate(sites, start=1):
+    for idx, site in enumerate(username, start=1):
         print(f"{idx}. {site[0]}")
 
-# Helper function to get user's numeric choice for sites
+# Helper function to get user's numeric choice for username
 def get_user_choice(site_count):
     try:
         choice = int(input("Select a number: ")) - 1
@@ -236,8 +236,8 @@ def get_user_choice(site_count):
         print("Invalid input. Please enter a number.")
         return None
 
-# Helper function to get stored sites
-def get_stored_sites(cursor, master_username):
+# Helper function to get stored username
+def retrieve_stored_username(cursor, master_username):
     cursor.execute("SELECT site_name FROM data_vault WHERE username = ?", (master_username,))
     return cursor.fetchall()
 

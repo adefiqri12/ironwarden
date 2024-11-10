@@ -14,7 +14,7 @@ from app.main import (
     retrieve_password,
     delete_password,
     update_password,
-    get_stored_sites,
+    retrieve_stored_username,
     create_new_account
 )
 
@@ -124,7 +124,7 @@ class TestPasswordManager(unittest.TestCase):
             self.test_password
         )
 
-    def test_get_stored_sites(self):
+    def test_retrieve_stored_username(self):
         """Test retrieval of stored sites."""
         # Insert test data
         test_sites = [("site1",), ("site2",), ("site3",)]
@@ -138,7 +138,7 @@ class TestPasswordManager(unittest.TestCase):
         self.conn.commit()
         
         # Test retrieval
-        sites = get_stored_sites(self.cursor, self.test_username)
+        sites = retrieve_stored_username(self.cursor, self.test_username)
         self.assertEqual(len(sites), 3)
         self.assertEqual([site[0] for site in sites], ["site1", "site2", "site3"])
 
