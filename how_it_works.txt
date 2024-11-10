@@ -26,7 +26,7 @@ Passwords for individual sites or accounts are stored securely by leveraging enc
    - Uses AES encryption in CBC mode with the derived key and IV.
    - Pads the password data using PKCS7 padding, encrypts it, and stores the salt, IV, and encrypted password in the database.
    
-   This process ensures that each stored password is encrypted uniquely, even if the same password is stored for multiple sites, due to the unique salt 
+   This process ensures that each stored password is encrypted uniquely, even if the same password is stored for multiple account, due to the unique salt 
    and IV per entry.
 
 3. **Password Decryption**  
