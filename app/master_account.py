@@ -6,7 +6,6 @@ import sys
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-
 from app.guideline import guideline, is_valid_username, is_strong_password, load_common_credentials
 
 # Initialize the argon2 password hasher
@@ -16,12 +15,10 @@ def init_master_account(cursor, conn, master_username, master_password=None, che
     if master_username is None:
         print("Error: Username cannot be empty.")
         return False
-
     # Check-only mode: Check for username existence without modifying the database
     if check_only:
         cursor.execute("SELECT 1 FROM master_accounts WHERE master_username = ?", (master_username,))
         return cursor.fetchone() is None  # Returns True if username does not exist
-
     try:
         hashed_master_password = ph.hash(master_password) 
         with conn:  # Context manager handles commit and rollback
@@ -47,16 +44,16 @@ def auth_master_account(cursor, master_username, master_password):
                 # Verify the provided password with the stored hash
                 # result[0] is stored_master_password
                 if ph.verify(result[0], master_password):
-                    input("Authentication successful.")
+                    print("Authentication successful.")
                     return True
             except:
-                input("Error: Invalid master password.")
+                print("Error: Invalid master password.")
                 return False
         else:
-            input("Error: Master username does not exist.")
+            print("Error: Master username does not exist.")
             return False
     except (sqlite3.Error, Exception) as e:
-        input(f"An error occurred: {e}")
+        print(f"An error occurred: {e}")
         return False
     return False
 
@@ -83,7 +80,7 @@ def create_master_account(conn, cursor):
             if new_master_password == confirm_password:
                 # Finalize account creation with the validated password
                 init_master_account(cursor, conn, new_master_username, new_master_password)
-                input("Account created successfully.")
+                print("Account created successfully.")
                 break
             else:
                 print("Error: Passwords do not match. Please try again.")
@@ -94,7 +91,7 @@ def delete_master_account(conn, cursor):
     master_username = input("Enter the username of the account to delete: ")
     account = find_master_account(cursor, master_username)
     if account is None:
-        input("Error: Username does not exist.")
+        print("Error: Username does not exist.")
         return
     master_password = getpass.getpass("Enter the password for this account to confirm deletion: ")
     if not auth_master_account(cursor, master_username, master_password):
@@ -102,9 +99,9 @@ def delete_master_account(conn, cursor):
     confirmation = input(f"Are you sure you want to delete the account '{master_username}'? This action is irreversible (yes/no): ")
     if confirmation.lower() == 'yes':
         if db_delete_master_account(conn, cursor, master_username):
-            input(f"Account '{master_username}' has been successfully deleted.")
+            print(f"Account '{master_username}' has been successfully deleted.")
     else:
-        input("Account deletion canceled.")
+        print("Account deletion canceled.")
 
 def db_delete_master_account(conn, cursor, master_username):
     try:

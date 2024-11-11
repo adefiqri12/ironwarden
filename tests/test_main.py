@@ -1,230 +1,203 @@
 import unittest
-from unittest.mock import Mock, patch, MagicMock
-import sqlite3
-import os
-import pyperclip
-from io import StringIO
+from unittest.mock import patch, MagicMock
 import sys
+import os
+import getpass
+import ctypes
+import pathlib
 
-# Import the functions to test
-from app.main import (
-    secure_clear,
-    handle_login,
-    store_password,
-    retrieve_password,
-    delete_password,
-    update_password,
-    retrieve_stored_username,
-    create_new_account
-)
+sys.path.append(str(pathlib.Path(__file__).parent.parent))
 
-class TestPasswordManager(unittest.TestCase):
-    def setUp(self):
-        """Set up test fixtures before each test method."""
-        # Create a test database connection
-        self.conn = sqlite3.connect(':memory:')
-        # Enable foreign key support
-        self.conn.execute("PRAGMA foreign_keys = ON")
-        self.cursor = self.conn.cursor()
-        
-        # Create necessary tables with correct schema
-        self.cursor.execute('''
-            CREATE TABLE IF NOT EXISTS master_accounts (
-                master_username TEXT PRIMARY KEY,
-                master_password BLOB
-            )
-        ''')
-        
-        self.cursor.execute('''
-            CREATE TABLE IF NOT EXISTS data_vault (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                username TEXT,
-                site_name TEXT,
-                salt BLOB,
-                iv BLOB,
-                encrypted_password BLOB,
-                FOREIGN KEY (username) REFERENCES master_accounts(master_username)
-            )
-        ''')
-        
-        # Test user credentials
-        self.test_username = "testuser"
-        self.test_password = "testpass123"
-        
-        # Insert test user with mock hashed password
-        self.cursor.execute(
-            "INSERT INTO master_accounts (master_username, master_password) VALUES (?, ?)",
-            (self.test_username, b"dummy_master_password")
-        )
-        self.conn.commit()
-        
-    def tearDown(self):
-        """Clean up after each test method."""
-        self.conn.close()
-        
-    def test_secure_clear(self):
-        """Test secure clearing of sensitive data."""
-        # Test with string
-        test_string = "sensitive_data"
-        result = secure_clear(test_string)
-        self.assertIsNone(result)
-        
-        # Test with bytearray
-        test_bytearray = bytearray(b"sensitive_data")
-        result = secure_clear(test_bytearray)
-        self.assertIsNone(result)
-        
-        # Test with None
-        result = secure_clear(None)
-        self.assertIsNone(result)
+from app.database import init_db
+from app.master_account import auth_master_account, create_master_account, delete_master_account, find_master_account
+from app.data_management import store_password, retrieve_password, update_password, delete_password
+from app.main import clear_screen, secure_clear, exit_program, display_menu, main, handle_login, handle_password_operations
 
-    @patch('app.user.hash_password')
-    @patch('getpass.getpass')
-    @patch('builtins.input')
-    def test_create_new_account(self, mock_input, mock_getpass, mock_hash):
-        """Test account creation functionality."""
-        # Mock user inputs
-        mock_input.return_value = "newuser"
-        mock_getpass.side_effect = ["newpass123", "newpass123"]
-        
-        # Mock password hashing
-        mock_hash.return_value = b"dummy_master_password"
-        
-        # Test account creation
-        create_new_account(self.conn, self.cursor)
-        
-        # Verify account was created
-        self.cursor.execute("SELECT master_username FROM master_accounts WHERE master_username = ?", 
-                        ("newuser",))
-        result = self.cursor.fetchone()
-        self.assertIsNotNone(result)
-        self.assertEqual(result[0], "newuser")
+class TestApp(unittest.TestCase):
 
-    @patch('time.time', side_effect=[0, 1])  # Mock start and end times
-    @patch('app.encryption.store_encrypted_password')
-    def test_store_password(self, mock_store_encrypted, mock_time):
-        """Test password storage functionality."""
-        # Mock inputs
-        site_name = "testsite"
-        password = "sitepass123"
+    @patch('app.database.init_db')
+    def test_init_db_success(self, mock_init_db):
+        # Mock the return value of init_db to simulate a successful database connection
+        mock_init_db.return_value = (MagicMock(), MagicMock())
         
-        # Mock the encryption function
-        mock_store_encrypted.return_value = True
-        
-        with patch('builtins.input', side_effect=[site_name, password]):
-            store_password(self.conn, self.cursor, self.test_username, self.test_password)
-            
-        # Verify store_encrypted_password was called with correct parameters
-        mock_store_encrypted.assert_called_once_with(
-            self.cursor,
-            self.conn,
-            self.test_username,
-            site_name,
-            password,
-            self.test_password
-        )
+        conn, cursor = init_db()
+        self.assertIsNotNone(conn)
+        self.assertIsNotNone(cursor)
 
-    def test_retrieve_stored_username(self):
-        """Test retrieval of stored sites."""
-        # Insert test data
-        test_sites = [("site1",), ("site2",), ("site3",)]
-        for site in test_sites:
-            self.cursor.execute(
-                """INSERT INTO data_vault 
-                (username, site_name, salt, iv, encrypted_password) 
-                VALUES (?, ?, ?, ?, ?)""",
-                (self.test_username, site[0], b"dummy_salt", b"dummy_iv", b"dummy_encrypted_password")
-            )
-        self.conn.commit()
+    @patch('app.database.init_db')
+    def test_init_db_failure(self, mock_init_db):
+        # Mock the return value to simulate a failure in database initialization
+        mock_init_db.return_value = (None, None)
         
-        # Test retrieval
-        sites = retrieve_stored_username(self.cursor, self.test_username)
-        self.assertEqual(len(sites), 3)
-        self.assertEqual([site[0] for site in sites], ["site1", "site2", "site3"])
+        conn, cursor = init_db()
+        self.assertIsNone(conn)
+        self.assertIsNone(cursor)
 
-    @patch('app.encryption.retrieve_encrypted_password')
-    @patch('pyperclip.copy')
-    def test_retrieve_password(self, mock_copy, mock_retrieve):
-        """Test password retrieval functionality."""
-        # Setup test data
-        test_site = "testsite"
-        test_password = "retrievedpass123"
+    @patch('app.master_account.create_master_account')
+    def test_create_master_account(self, mock_create_master_account):
+        # Mock the database operation
+        mock_create_master_account.return_value = True
         
-        # Mock the retrieval function
-        mock_retrieve.return_value = test_password
+        conn = MagicMock()
+        cursor = MagicMock()
+        result = create_master_account(conn, cursor)
         
-        # Insert test site
-        self.cursor.execute(
-            """INSERT INTO data_vault 
-            (username, site_name, salt, iv, encrypted_password) 
-            VALUES (?, ?, ?, ?, ?)""",
-            (self.test_username, test_site, b"dummy_salt", b"dummy_iv", b"dummy_encrypted_password")
-        )
-        self.conn.commit()
-        
-        # Mock input to select the first site
-        with patch('builtins.input', return_value="1"):
-            retrieve_password(self.cursor, self.test_username, self.test_password)
-            
-        # Verify password was copied to clipboard
-        mock_copy.assert_called_once_with(test_password)
+        self.assertTrue(result)
 
-    def test_delete_password(self):
-        """Test password deletion functionality."""
-        # Insert test data
-        test_site = "testsite"
-        self.cursor.execute(
-            """INSERT INTO data_vault 
-            (username, site_name, salt, iv, encrypted_password) 
-            VALUES (?, ?, ?, ?, ?)""",
-            (self.test_username, test_site, b"dummy_salt", b"dummy_iv", b"dummy_encrypted_password")
-        )
-        self.conn.commit()
+    @patch('app.master_account.delete_master_account')
+    def test_delete_master_account(self, mock_delete_master_account):
+        # Mock the delete operation
+        mock_delete_master_account.return_value = True
         
-        # Mock input to select the first site
-        with patch('builtins.input', return_value="1"):
-            delete_password(self.conn, self.cursor, self.test_username)
+        conn = MagicMock()
+        cursor = MagicMock()
+        result = delete_master_account(conn, cursor)
         
-        # Verify password was deleted
-        self.cursor.execute(
-            "SELECT * FROM data_vault WHERE username = ? AND site_name = ?",
-            (self.test_username, test_site)
-        )
-        result = self.cursor.fetchone()
-        self.assertIsNone(result)
+        self.assertTrue(result)
 
-    @patch('app.encryption.update_encrypted_password')
-    def test_update_password(self, mock_update):
-        """Test password update functionality."""
-        # Setup test data
-        test_site = "testsite"
-        new_password = "newpass123"
+    @patch('app.master_account.auth_master_account')
+    def test_auth_master_account_success(self, mock_auth_master_account):
+        # Mock the authentication result to return True for a successful login
+        mock_auth_master_account.return_value = True
         
-        # Insert test site
-        self.cursor.execute(
-            """INSERT INTO data_vault 
-            (username, site_name, salt, iv, encrypted_password) 
-            VALUES (?, ?, ?, ?, ?)""",
-            (self.test_username, test_site, b"dummy_salt", b"dummy_iv", b"dummy_encrypted_password")
-        )
-        self.conn.commit()
+        conn = MagicMock()
+        cursor = MagicMock()
+        master_username = 'admin'
+        master_password = bytearray(b'secret')
         
-        # Mock the update function
-        mock_update.return_value = True
+        auth_result = auth_master_account(cursor, master_username, master_password.decode())
+        self.assertTrue(auth_result)
+
+    @patch('app.master_account.auth_master_account')
+    def test_auth_master_account_failure(self, mock_auth_master_account):
+        # Mock the authentication to return False (failed login)
+        mock_auth_master_account.return_value = False
         
-        # Mock inputs
-        with patch('builtins.input', side_effect=["1", new_password]):
-            update_password(self.conn, self.cursor, self.test_username, self.test_password)
-            
-        # Verify update_encrypted_password was called with correct parameters
-        mock_update.assert_called_once_with(
-            self.cursor,
-            self.conn,
-            self.test_username,
-            test_site,
-            new_password,
-            self.test_password
-        )
+        conn = MagicMock()
+        cursor = MagicMock()
+        master_username = 'admin'
+        master_password = bytearray(b'wrongpassword')
+        
+        auth_result = auth_master_account(cursor, master_username, master_password.decode())
+        self.assertFalse(auth_result)
+
+    @patch('app.data_management.store_password')
+    def test_store_password(self, mock_store_password):
+        # Mock the store password operation
+        mock_store_password.return_value = True
+        
+        conn = MagicMock()
+        cursor = MagicMock()
+        master_username = 'admin'
+        master_password = bytearray(b'secret')
+        
+        result = store_password(conn, cursor, master_username, master_password)
+        self.assertTrue(result)
+
+    @patch('app.data_management.retrieve_password')
+    def test_retrieve_password(self, mock_retrieve_password):
+        # Mock the retrieve password operation
+        mock_retrieve_password.return_value = 'stored_password'
+        
+        cursor = MagicMock()
+        master_username = 'admin'
+        master_password = bytearray(b'secret')
+        
+        password = retrieve_password(cursor, master_username, master_password)
+        self.assertEqual(password, 'stored_password')
+
+    @patch('app.data_management.update_password')
+    def test_update_password(self, mock_update_password):
+        # Mock the update password operation
+        mock_update_password.return_value = True
+        
+        conn = MagicMock()
+        cursor = MagicMock()
+        master_username = 'admin'
+        master_password = bytearray(b'secret')
+        
+        result = update_password(conn, cursor, master_username, master_password)
+        self.assertTrue(result)
+
+    @patch('app.data_management.delete_password')
+    def test_delete_password(self, mock_delete_password):
+        # Mock the delete password operation
+        mock_delete_password.return_value = True
+        
+        conn = MagicMock()
+        cursor = MagicMock()
+        master_username = 'admin'
+        
+        result = delete_password(conn, cursor, master_username)
+        self.assertTrue(result)
+
+    @patch('app.os.system')
+    def test_clear_screen(self, mock_system):
+        # Mock os.system to test clear_screen function
+        mock_system.return_value = None
+        clear_screen()
+        mock_system.assert_called_with('clear')  # or 'cls' depending on the OS
+
+    @patch('app.ctypes.memset')
+    def test_secure_clear(self, mock_memset):
+        # Test secure_clear function with bytearray data
+        data = bytearray(b'secret')
+        secure_clear(data)
+        mock_memset.assert_called_once()
+
+    @patch('app.sys.exit')
+    def test_exit_program(self, mock_exit):
+        # Test exit_program and ensure exit is called
+        conn = MagicMock()
+        exit_program(conn)
+        mock_exit.assert_called_once()
+
+    @patch('app.display_menu')
+    @patch('app.handle_login')
+    @patch('app.handle_password_operations')
+    def test_main(self, mock_handle_password_operations, mock_handle_login, mock_display_menu):
+        # Mock main menu interactions and functions
+        mock_handle_password_operations.return_value = None
+        mock_handle_login.return_value = None
+        mock_display_menu.return_value = None
+        
+        with patch('builtins.input', return_value='1'):  # Mock input to choose option 1 (login)
+            main()
+
+    @patch('app.input')
+    @patch('app.find_master_account')
+    @patch('app.auth_master_account')
+    def test_handle_login_success(self, mock_auth_master_account, mock_find_master_account, mock_input):
+        # Test successful login path
+        mock_find_master_account.return_value = True
+        mock_auth_master_account.return_value = True
+        mock_input.side_effect = ['admin', 'secret']
+        
+        conn = MagicMock()
+        cursor = MagicMock()
+        master_username = None
+        master_password = bytearray()
+        
+        handle_login(conn, cursor, master_username, master_password)
+        mock_input.assert_any_call("Enter your username: ")
+        mock_input.assert_any_call("Enter your master password: ")
+
+    @patch('app.input')
+    @patch('app.find_master_account')
+    @patch('app.auth_master_account')
+    def test_handle_login_failure(self, mock_auth_master_account, mock_find_master_account, mock_input):
+        # Test failed login path
+        mock_find_master_account.return_value = None
+        mock_input.side_effect = ['admin', 'wrongpassword']
+        
+        conn = MagicMock()
+        cursor = MagicMock()
+        master_username = None
+        master_password = bytearray()
+        
+        handle_login(conn, cursor, master_username, master_password)
+        mock_input.assert_any_call("Enter your username: ")
+        mock_input.assert_any_call("Enter your master password: ")
 
 if __name__ == '__main__':
     unittest.main()

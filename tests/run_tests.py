@@ -11,7 +11,7 @@ print(sys.path)
 # Now import the test cases
 from tests.test_encryption import TestEncryption
 from tests.test_database import TestDatabase
-from tests.test_user import TestUser
+from tests.test_crud_master_account import TestUser
 
 def run_tests():
     # Create a test suite
