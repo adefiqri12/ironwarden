@@ -4,10 +4,8 @@ import os
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-
 from app.encryption import store_encrypted_password, update_encrypted_password, retrieve_encrypted_password
 from generator.password_generator import password_generator
-
 
 def store_password(conn, cursor, master_username, master_password):
     site_name = input("Enter new account name or ID: ")

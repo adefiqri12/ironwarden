@@ -1,6 +1,6 @@
 import sys
 import os
-import getpass 
+import getpass
 import ctypes
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -15,20 +15,15 @@ def clear_screen():
 
 def secure_clear(data):
     """Securely clear data from memory."""
-    if data is None or data == "":
-        return None
     if isinstance(data, bytearray):
         ctypes.memset(ctypes.addressof(ctypes.c_char.from_buffer(data)), 0, len(data))
-    elif isinstance(data, str):
-        data_bytes = bytearray(data.encode())
-        ctypes.memset(ctypes.addressof(ctypes.c_char.from_buffer(data_bytes)), 0, len(data_bytes))
     return None
 
 def exit_program(conn, *args):
-    """Clears sensitive data, closes the database connection, clears the screen, and exits the program."""
+    """Securely clear sensitive data, close the database connection, clear the screen, and exit."""
     for arg in args:
-        if arg is not None:  # Only clear if the variable is not None
-            arg = secure_clear(arg)
+        if isinstance(arg, bytearray):  # Only clear if it’s a mutable bytearray
+            secure_clear(arg)
     if conn:
         conn.close()
     clear_screen()
@@ -46,11 +41,11 @@ def main():
     conn, cursor = init_db()
     if conn is None or cursor is None:
         print("Error: Failed to initialize database. Exiting.")
-        return
+        exit_program(conn)
     
     master_username = None
-    master_password = None
-
+    master_password = bytearray()
+    
     while True:
         display_menu()
         choice = input("Enter your choice: ")
@@ -71,11 +66,12 @@ def handle_login(conn, cursor, master_username, master_password):
     if account is None:
         input("Error: Username does not exist.")
         return
-    master_password = getpass.getpass("Enter your master password: ")
-
-    if auth_master_account(cursor, master_username, master_password):
+    password_input = getpass.getpass("Enter your master password: ")
+    master_password.extend(password_input.encode())  # Store in bytearray for secure clear
+    if auth_master_account(cursor, master_username, master_password.decode()):
         print(f"\nWelcome, {master_username}!")
         handle_password_operations(conn, cursor, master_username, master_password)
+    secure_clear(master_password)  # Clear after login attempt
 
 def handle_password_operations(conn, cursor, master_username, master_password):
     while True:
@@ -94,7 +90,8 @@ def handle_password_operations(conn, cursor, master_username, master_password):
         elif option == '4':
             update_password(conn, cursor, master_username, master_password)
         elif option == '5':
-            exit_program(conn, master_username, master_password)
+            secure_clear(master_password)  # Clear password upon logout
+            break
         else:
             print("Error: Please select a valid option.")
 
