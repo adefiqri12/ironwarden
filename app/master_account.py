@@ -57,7 +57,6 @@ def auth_master_account(cursor, master_username, master_password):
         return False
     return False
 
-
 def create_master_account(conn, cursor):
     guideline()
     common_usernames = load_common_credentials("username")

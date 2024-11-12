@@ -30,8 +30,6 @@ def exit_program(conn, *args):
     sys.exit()
 
 def display_menu():
-    clear_screen()
-    print_ascii_welcome()
     print("1. Login")
     print("2. Create a New Master Account")
     print("3. Delete an Existing Master Account")
@@ -43,6 +41,9 @@ def main():
         print("Error: Failed to initialize database. Exiting.")
         exit_program(conn)
     
+    clear_screen()
+    print_ascii_welcome()
+
     master_username = None
     master_password = bytearray()
     
@@ -64,7 +65,7 @@ def handle_login(conn, cursor, master_username, master_password):
     master_username = input("Enter your username: ")
     account = find_master_account(cursor, master_username)
     if account is None:
-        input("Error: Username does not exist.")
+        print("Error: Username does not exist.")
         return
     password_input = getpass.getpass("Enter your master password: ")
     master_password.extend(password_input.encode())  # Store in bytearray for secure clear
